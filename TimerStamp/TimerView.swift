@@ -49,8 +49,8 @@ struct TimeTimerView: View {
 
             // 파이 조각 (남은 시간)
             PieSlice(
-                startAngle: .degrees(-90),
-                endAngle: .degrees(-90 + (360 * (remainingSeconds / totalSeconds)))
+                startAngle: .degrees(-90 + 360 * (1 - remainingSeconds / totalSeconds)),
+                endAngle: .degrees(-90)
             )
             .fill(Color.red.opacity(0.7))
 
