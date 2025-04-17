@@ -1,0 +1,20 @@
+# Xcode files
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+build/
+*.moved-aside
+*.xcarchive
+
+# SwiftPM
+.build/
+.swiftpm/xcode/package.xcworkspace/
+Package.resolved
+Package.pins
+
+# User-specific
+*.DS_Store
+*.orig
