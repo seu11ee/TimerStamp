@@ -10,7 +10,11 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         TabView {
-            ForEach(0..<2) { index in
+//            PieSlice(startAngle: .degrees(0), endAngle: .degrees(270))
+//                            .fill(Color.red)
+//                            .frame(width: 200, height: 200)
+            TimeTimerView() //
+            ForEach(0..<1) { index in
                 ZStack {
                     Color(hue: Double(index) / 5.0, saturation: 0.6, brightness: 0.9)
                     Text("Page \(index + 1)")
