@@ -10,10 +10,7 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         TabView {
-//            PieSlice(startAngle: .degrees(0), endAngle: .degrees(270))
-//                            .fill(Color.red)
-//                            .frame(width: 200, height: 200)
-            TimeTimerView() //
+            TimerView(minutes: 45, width: 280, height: 280) //
             ForEach(0..<1) { index in
                 ZStack {
                     Color(hue: Double(index) / 5.0, saturation: 0.6, brightness: 0.9)
