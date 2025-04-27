@@ -45,6 +45,7 @@ struct MinuteDial: View {
                                 
                                 // ✅ 드래그 중에도 selectedMinute 업데이트
                                 let currentRotation = rotation + delta
+                                let flooredRotation = floor(currentRotation / 6) * 6
                                 let newMinute = Int((currentRotation.truncatingRemainder(dividingBy: 360)) / 6)
                                 selectedMinute = (newMinute + 60) % 60
                             }
@@ -59,7 +60,7 @@ struct MinuteDial: View {
                                 let delta = adjustedAngle - start
                                 rotation += delta
                                 startAngle = nil
-                                
+                                let flooredRotation = floor(rotation / 6) * 6
                                 // 분 계산 (각도 / 6도 = 1분)
                                 let newMinute = Int(((rotation).truncatingRemainder(dividingBy: 360)) / 6)
                                 selectedMinute = (newMinute + 60) % 60

@@ -12,6 +12,9 @@ struct TimerView: View {
     @State private var progress: Double = 1.0
     @State private var isCompleted = false
     @State var minutes: Int = 0
+    @State private var remainingSeconds: Int = 0
+    @State private var timer: Timer?
+    
     var width: CGFloat
     var height: CGFloat
     
@@ -19,6 +22,7 @@ struct TimerView: View {
         self.minutes = minutes
         self.width = width
         self.height = height
+        _remainingSeconds = State(initialValue: minutes * 60)
     }
     // TODO: - TimerView test code
     var body: some View {
@@ -36,23 +40,40 @@ struct TimerView: View {
                         .foregroundColor(.green)
                 }
                 MinuteDial(selectedMinute: $minutes, radius: width / 2)
+                    .onChange(of: minutes) { newMinutes in
+                                            // minutes가 바뀔 때마다 seconds를 업데이트
+                                            remainingSeconds = newMinutes * 60
+                                        }
             }
-            Button(action: {
-                let duration = Double(minutes * 60)
-                withAnimation(.linear(duration: duration)) {
-                    progress = 0.0
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
-                    isCompleted = true
-                }
-            }) {
+            Button(action: startTimer) {
                 Text("\(minutes)분")
                     .font(.title)
                     .bold()
                     .foregroundColor(.black)
             }
+            // 남은 시간 보여주기
+            TimeLabel(seconds: remainingSeconds)
+                                .offset(y: 100)
         }
     }
+    private func startTimer() {
+            remainingSeconds = minutes * 60
+            progress = 1.0
+            isCompleted = false
+            timer?.invalidate()
+            
+            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+                if remainingSeconds > 0 {
+                    remainingSeconds -= 1
+                    withAnimation(.linear(duration: 1.0)) {
+                        progress = Double(remainingSeconds) / Double(minutes * 60)
+                    }
+                } else {
+                    timer?.invalidate()
+                    isCompleted = true
+                }
+            }
+        }
 }
 
 struct TimeLabel: View {
