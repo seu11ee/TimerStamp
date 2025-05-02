@@ -6,74 +6,66 @@
 //
 
 import SwiftUI
-import Combine
 
 struct TimerView: View {
-    @State private var progress: Double = 1.0
-    @State private var isCompleted = false
-    @State var minutes: Int = 0
-    @State private var remainingSeconds: Int = 0
-    @State private var timer: Timer?
-    
+    @StateObject private var viewModel = TimerViewModel()
+
     var width: CGFloat
     var height: CGFloat
-    
-    init(minutes: Int, width: CGFloat, height: CGFloat) {
-        self.minutes = minutes
-        self.width = width
-        self.height = height
-        _remainingSeconds = State(initialValue: minutes * 60)
-    }
-    // TODO: - TimerView test code
+
     var body: some View {
         VStack(spacing: 60) {
             ZStack {
                 MinuteTicks()
                 MinuteLabels(width: width, height: height)
-                PieSlice(progress: progress, minutes: minutes)
-                    .fill(Color.red)
-                    .frame(width: width, height: height)
-                if isCompleted {
+
+                PieSlice(
+                    progress: calculateProgress(),
+                    minutes: viewModel.durationMinutes
+                )
+                .fill(Color.red)
+                .frame(width: width, height: height)
+
+                if viewModel.isFinished {
                     Text("⏰ Done!")
                         .font(.title)
                         .bold()
                         .foregroundColor(.green)
                 }
-                MinuteDial(selectedMinute: $minutes, radius: width / 2)
-                    .onChange(of: minutes) { newMinutes in
-                                            // minutes가 바뀔 때마다 seconds를 업데이트
-                                            remainingSeconds = newMinutes * 60
-                                        }
+                MinuteDial(selectedSeconds: $viewModel.remainingSeconds, radius: width / 2)
+                    .onChange(of: viewModel.durationMinutes) { newValue in
+                        if !viewModel.isRunning {
+                            viewModel.reset()
+                        }
+                    }
             }
-            Button(action: startTimer) {
-                Text("\(minutes)분")
+
+            Button(action: {
+                if viewModel.isRunning {
+                    viewModel.reset()
+                } else {
+                    viewModel.start()
+                }
+            }) {
+                Text(viewModel.isRunning ? "RESET" : "START")
                     .font(.title)
                     .bold()
                     .foregroundColor(.black)
             }
-            // 남은 시간 보여주기
-            TimeLabel(seconds: remainingSeconds)
-                                .offset(y: 100)
+            .offset(y: 100)
+
+            TimeLabel(seconds: viewModel.remainingSeconds)
+                .offset(y: 100)
+        }
+        .onAppear {
+            viewModel.restoreTimerIfNeeded()
         }
     }
-    private func startTimer() {
-            remainingSeconds = minutes * 60
-            progress = 1.0
-            isCompleted = false
-            timer?.invalidate()
-            
-            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                if remainingSeconds > 0 {
-                    remainingSeconds -= 1
-                    withAnimation(.linear(duration: 1.0)) {
-                        progress = Double(remainingSeconds) / Double(minutes * 60)
-                    }
-                } else {
-                    timer?.invalidate()
-                    isCompleted = true
-                }
-            }
-        }
+
+    private func calculateProgress() -> Double {
+        let total = Double(viewModel.durationMinutes * 60)
+        return total > 0 ? Double(viewModel.remainingSeconds) / total : 1.0
+    }
 }
 
 struct TimeLabel: View {

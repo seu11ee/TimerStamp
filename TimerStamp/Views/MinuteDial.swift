@@ -8,12 +8,13 @@
 import SwiftUI
 
 struct MinuteDial: View {
-    @Binding var selectedMinute: Int
+    @Binding var selectedSeconds: Int
     var radius: CGFloat
     
     @GestureState private var dragRotation: Double = 0
     @State private var rotation: Double = 0
     @State private var startAngle: Double?
+    @State private var totalSeconds: Int = 3600
     
     var body: some View {
         GeometryReader { geo in
@@ -23,7 +24,7 @@ struct MinuteDial: View {
                 .fill(Color.yellow)
                 .frame(width: radius * 2, height: radius * 2)
                 .position(center)
-                .rotationEffect(.degrees(rotation + dragRotation))
+                .rotationEffect(.degrees((rotation + dragRotation) / 6 * 6))
                 .gesture(
                     DragGesture()
                         .updating($dragRotation) { value, state, _ in
@@ -45,9 +46,9 @@ struct MinuteDial: View {
                                 
                                 // ✅ 드래그 중에도 selectedMinute 업데이트
                                 let currentRotation = rotation + delta
-                                let flooredRotation = floor(currentRotation / 6) * 6
+                                let flooredRotation = ceil(currentRotation / 6) * 6
                                 let newMinute = Int((currentRotation.truncatingRemainder(dividingBy: 360)) / 6)
-                                selectedMinute = (newMinute + 60) % 60
+                                selectedSeconds = (newMinute + 60) % 60 * 60
                             }
                         }
                         .onEnded { value in
@@ -63,19 +64,29 @@ struct MinuteDial: View {
                                 let flooredRotation = floor(rotation / 6) * 6
                                 // 분 계산 (각도 / 6도 = 1분)
                                 let newMinute = Int(((rotation).truncatingRemainder(dividingBy: 360)) / 6)
-                                selectedMinute = (newMinute + 60) % 60
+                                selectedSeconds = (newMinute + 60) % 60 * 60
                             }
                         }
                 )
         }
         .frame(width: radius * 2, height: radius * 2)
+        .onAppear {
+            rotation = Double(selectedSeconds) / 60.0 * 6
+        }
+        .onChange(of: selectedSeconds) { newValue in
+                    // selectedSeconds가 바뀔 때마다 rotation 값 갱신
+                    withAnimation(.linear(duration: 0.5)) {
+                        rotation = Double(newValue) / Double(totalSeconds) * 360
+                    }
+                }
     }
+    
 }
 
 
 struct RadiusStick: Shape {
     var radius: CGFloat
-    var stickWidth: CGFloat = 4
+    var stickWidth: CGFloat = 8
     
     func path(in rect: CGRect) -> Path {
         var path = Path()
