@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct MinuteDial: View {
-    @Binding var selectedSeconds: Int
+    @Binding var durationMinutes: Int
+    var progress: Double
     var radius: CGFloat
     
     @GestureState private var dragRotation: Double = 0
+    @GestureState private var isDragging = false
     @State private var rotation: Double = 0
     @State private var startAngle: Double?
     @State private var totalSeconds: Int = 3600
@@ -24,7 +26,7 @@ struct MinuteDial: View {
                 .fill(Color.yellow)
                 .frame(width: radius * 2, height: radius * 2)
                 .position(center)
-                .rotationEffect(.degrees((rotation + dragRotation) / 6 * 6))
+                .rotationEffect(.degrees(rotation + dragRotation))
                 .gesture(
                     DragGesture()
                         .updating($dragRotation) { value, state, _ in
@@ -46,10 +48,13 @@ struct MinuteDial: View {
                                 
                                 // ✅ 드래그 중에도 selectedMinute 업데이트
                                 let currentRotation = rotation + delta
-                                let flooredRotation = ceil(currentRotation / 6) * 6
-                                let newMinute = Int((currentRotation.truncatingRemainder(dividingBy: 360)) / 6)
-                                selectedSeconds = (newMinute + 60) % 60 * 60
+                                let flooredRotation = floor(currentRotation / 6) * 6
+                                let newMinute = Int((flooredRotation.truncatingRemainder(dividingBy: 360)) / 6)
+                                durationMinutes = (newMinute + 60) % 60
                             }
+                        }
+                        .updating($isDragging) { _, state, _ in
+                            state = true  // 제스처가 진행 중일 때만 true
                         }
                         .onEnded { value in
                             let location = value.location
@@ -61,24 +66,26 @@ struct MinuteDial: View {
                                 let delta = adjustedAngle - start
                                 rotation += delta
                                 startAngle = nil
-                                let flooredRotation = floor(rotation / 6) * 6
+                                rotation = floor(rotation / 6) * 6
                                 // 분 계산 (각도 / 6도 = 1분)
                                 let newMinute = Int(((rotation).truncatingRemainder(dividingBy: 360)) / 6)
-                                selectedSeconds = (newMinute + 60) % 60 * 60
+                                durationMinutes = (newMinute + 60) % 60
                             }
                         }
                 )
         }
         .frame(width: radius * 2, height: radius * 2)
         .onAppear {
-            rotation = Double(selectedSeconds) / 60.0 * 6
+            rotation = Double(durationMinutes) * 6
         }
-        .onChange(of: selectedSeconds) { newValue in
-                    // selectedSeconds가 바뀔 때마다 rotation 값 갱신
-                    withAnimation(.linear(duration: 0.5)) {
-                        rotation = Double(newValue) / Double(totalSeconds) * 360
-                    }
+        .onChange(of: progress) { newValue in
+            withAnimation(.linear(duration: 1)) {
+                if !isDragging {
+                    print("rotation 갱신")
+                    rotation = progress * Double(durationMinutes) * 6
                 }
+            }
+        }
     }
     
 }

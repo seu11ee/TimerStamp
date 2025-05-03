@@ -11,11 +11,21 @@ import Combine
 
 final class TimerViewModel: ObservableObject {
     // MARK: - Public Properties
-    @Published var durationMinutes: Int = 25
+    @Published var durationMinutes: Int = 25 {
+        didSet {
+            if !isRunning {
+                reset()
+            }
+        }
+    }
     @Published var remainingSeconds: Int = 25 * 60
     @Published var isRunning: Bool = false
     @Published var isFinished: Bool = false
-
+    var progress: Double {
+        let total = Double(durationMinutes * 60)
+        return total > 0 ? Double(remainingSeconds) / total : 1.0
+    }
+    
     // MARK: - Private Properties
     private var timer: Timer?
     private var endDate: Date?
@@ -24,7 +34,7 @@ final class TimerViewModel: ObservableObject {
     init() {
         requestNotificationPermission()
     }
-
+ 
     // MARK: - Timer Control
     func start() {
         guard !isRunning && !isFinished else { return }
