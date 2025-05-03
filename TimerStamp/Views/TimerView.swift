@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TimerView: View {
-    @StateObject private var viewModel = TimerViewModel()
+    @ObservedObject var viewModel: TimerViewModel
 
     var width: CGFloat
     var height: CGFloat
@@ -20,7 +20,7 @@ struct TimerView: View {
                 MinuteLabels(width: width, height: height)
 
                 PieSlice(
-                    progress: calculateProgress(),
+                    progress: viewModel.progress,
                     minutes: viewModel.durationMinutes
                 )
                 .fill(Color.red)
@@ -32,12 +32,7 @@ struct TimerView: View {
                         .bold()
                         .foregroundColor(.green)
                 }
-                MinuteDial(selectedSeconds: $viewModel.remainingSeconds, radius: width / 2)
-                    .onChange(of: viewModel.durationMinutes) { newValue in
-                        if !viewModel.isRunning {
-                            viewModel.reset()
-                        }
-                    }
+                MinuteDial(durationMinutes: $viewModel.durationMinutes, progress: viewModel.progress, radius: width / 2)
             }
 
             Button(action: {
