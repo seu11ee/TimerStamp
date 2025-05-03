@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct PieSlice: Shape {
     var progress: Double // 1.0 → 0.0
     var minutes: Int     // 입력된 분 (1 ~ 59)
