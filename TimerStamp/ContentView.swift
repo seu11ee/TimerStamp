@@ -47,7 +47,7 @@ struct ContentView: View {
                 if let image = viewModel.selectedImage {
                     CertificationModalView(
                         baseImage: image,
-                        minutes: 30,
+                        minutes: timerView.viewModel.durationMinutes,
                         onDismiss: {
                             viewModel.dismissModal()
                         }

@@ -95,38 +95,63 @@ struct CertificationModalView: View {
 
 enum ComposedImageRenderer {
     @MainActor
-    static func render(image: UIImage, minutes: Int) -> UIImage? {
-        let view = ZStack {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
-            
-            PieSlice(progress: 0, minutes: minutes)
-                .fill(Color.red.opacity(0.4))
+        static func render(image: UIImage, minutes: Int) -> UIImage? {
+            let view = ZStack {
+                GeometryReader { geo in
+                    // 배경 이미지
+                    let size = 600.0
+                        let center = CGPoint(x: geo.size.width / 2, y: geo.size.height / 2)
 
-            VStack {
-                Spacer()
-                HStack {
-                    Text("⏱ \(minutes)분 완료!")
-                        .font(.headline)
-                        .padding(6)
-                        .background(.ultraThinMaterial)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                    Spacer()
-                    Text(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))
-                        .font(.caption)
-                        .padding(6)
-                        .background(.ultraThinMaterial)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: geo.size.width, height: geo.size.height)
+                    
+                    // 분침 (MinuteTicks에 반지름 전달)
+                            MinuteTicks(radius: size / 2)  // 반지름을 전달
+                                .frame(width: size, height: size)
+                                .position(center)
+                                .foregroundColor(.blue)  // 분침의 색상
+                                .opacity(0.8)
+
+                            // 중앙 하얀 반투명 PieSlice
+                            PieSlice(progress: 1.0, minutes: minutes)
+                                .fill(Color.red.opacity(0.6))
+                                .frame(width: size, height: size)
+                                .position(center)
+
+
+                    // 중앙 PieSlice (하얗고 반투명)
+                    PieSlice(progress: 1, minutes: minutes)
+                        .fill(Color.white.opacity(0.6))
+                        .frame(width: size, height: size)
+                        .position(x: geo.size.width / 2, y: geo.size.height / 2)
+
+                    // 하단 텍스트
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Text("⏱ \(minutes)분 완료!")
+                                .font(.headline)
+                                .padding(6)
+                                .background(.ultraThinMaterial)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                            Spacer()
+                            Text(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))
+                                .font(.caption)
+                                .padding(6)
+                                .background(.ultraThinMaterial)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                        .padding()
+                    }
                 }
-                .padding()
+                .frame(width: 1000, height: 1000)
             }
-        }
-        .frame(width: 1000, height: 1000) // 캔버스 크기 고정
-        .background(Color.white)
+            .background(Color.white)
 
-        let renderer = ImageRenderer(content: view)
-        renderer.proposedSize = .init(width: 1000, height: 1000)
-        return renderer.uiImage
-    }
+            let renderer = ImageRenderer(content: view)
+            renderer.proposedSize = .init(width: 1000, height: 1000)
+            return renderer.uiImage
+        }
 }

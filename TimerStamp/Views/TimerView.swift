@@ -22,7 +22,7 @@ struct TimerView: View {
     var body: some View {
         VStack(spacing: 60) {
             ZStack {
-                MinuteTicks()
+                
                 MinuteLabels(width: width, height: height)
 
                 PieSlice(
@@ -31,7 +31,7 @@ struct TimerView: View {
                 )
                 .fill(Color.red)
                 .frame(width: width, height: height)
-
+                MinuteTicks(radius: width / 2)
                 if viewModel.isFinished {
                     Text("⏰ Done!")
                         .font(.title)
