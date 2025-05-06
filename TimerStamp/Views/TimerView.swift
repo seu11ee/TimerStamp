@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+enum TimerState {
+    case idle
+    case running
+    case ended
+}
+
 struct TimerView: View {
     @ObservedObject var viewModel: TimerViewModel
 
@@ -47,10 +53,9 @@ struct TimerView: View {
                     .bold()
                     .foregroundColor(.black)
             }
-            .offset(y: 100)
+            .offset(y: 15)
 
             TimeLabel(seconds: viewModel.remainingSeconds)
-                .offset(y: 100)
         }
         .onAppear {
             viewModel.restoreTimerIfNeeded()
