@@ -35,6 +35,11 @@ final class TimerViewModel: ObservableObject {
     init() {
         requestNotificationPermission()
     }
+    init(durationMinutes: Int = 25) {
+        self.durationMinutes = durationMinutes
+        self.remainingSeconds = durationMinutes * 60
+        requestNotificationPermission()
+    }
  
     // MARK: - Timer Control
     func start() {

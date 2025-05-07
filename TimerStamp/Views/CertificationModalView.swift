@@ -98,60 +98,57 @@ enum ComposedImageRenderer {
     static func render(image: UIImage, minutes: Int) -> UIImage? {
         let view = ZStack {
             GeometryReader { geo in
-                // 배경 이미지
-                let size = 600.0
-                let center = CGPoint(x: geo.size.width / 2, y: geo.size.height / 2)
-                
+                let size = 400.0
+                let center = CGPoint(x: size / 2 + 50, y: geo.size.height - size / 2 - 50.0)
+
+                // 1. 원본 이미지
                 Image(uiImage: image)
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
                     .frame(width: geo.size.width, height: geo.size.height)
-                
-                // 분침 (MinuteTicks에 반지름 전달)
-                MinuteTicks(radius: size / 2)  // 반지름을 전달
-                    .frame(width: size, height: size)
-                    .position(center)
-                    .foregroundColor(.blue)  // 분침의 색상
-                    .opacity(0.8)
-                
-                // 중앙 하얀 반투명 PieSlice
-                PieSlice(progress: 1.0, minutes: minutes)
-                    .fill(Color.red.opacity(0.6))
-                    .frame(width: size, height: size)
-                    .position(center)
-                
-                
-                // 중앙 PieSlice (하얗고 반투명)
-                PieSlice(progress: 1, minutes: minutes)
-                    .fill(Color.white.opacity(0.6))
-                    .frame(width: size, height: size)
-                    .position(x: geo.size.width / 2, y: geo.size.height / 2)
-                
-                // 하단 텍스트
-                VStack {
+
+                // 2. 어두운 오버레이
+                Color.gray.opacity(0.2)
+                    .frame(width: geo.size.width, height: geo.size.height)
+
+                // 3. TimerView를 흐리게 오버레이
+                TimerView(viewModel: TimerViewModel(durationMinutes: minutes), width: size, height: size)
+                    .frame(width: size, height: size) // 명확한 크기 지정
+                    .clipShape(RoundedRectangle(cornerRadius: size / 4)) // 코너 라운딩
+                    .overlay( // 테두리 오버레이 추가
+                        RoundedRectangle(cornerRadius: size / 4)
+                            .stroke(Color.black, lineWidth: 25) // 테두리 색상 및 두께
+                            .opacity(0.7)
+                    )
+                    .opacity(0.7) // 투명도 적용
+                    .position(center) // 위치 지정
+
+                // 4. 하단 텍스트
+                HStack {
                     Spacer()
-                    HStack {
-                        Text("⏱ \(minutes)분 완료!")
-                            .font(.headline)
-                            .padding(6)
-                            .background(.ultraThinMaterial)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    VStack(alignment: .trailing){
                         Spacer()
+                        Text("✨ \(minutes)분 완료!")
+                            .font(.system(size: 62, weight: .bold))
+                            .foregroundColor(.white)
+                        
                         Text(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))
-                            .font(.caption)
-                            .padding(6)
-                            .background(.ultraThinMaterial)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .font(.system(size: 52, weight: .bold))
+                            .foregroundColor(.white)
+                        
+                        Spacer().frame(height: 50)
                     }
-                    .padding()
                 }
+                .padding(.trailing, 16)
+                
             }
-            .frame(width: 1000, height: 1000)
+            .frame(width: 1080, height: 1920)
         }
-            .background(Color.white)
-        
+        .background(Color.white)
+
         let renderer = ImageRenderer(content: view)
-        renderer.proposedSize = .init(width: 1000, height: 1000)
+        renderer.proposedSize = .init(CGSize(width: 1080, height: 1920))
+        renderer.isOpaque = true
         return renderer.uiImage
     }
 }

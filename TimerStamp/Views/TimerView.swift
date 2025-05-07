@@ -18,6 +18,10 @@ struct TimerView: View {
 
     var width: CGFloat
     var height: CGFloat
+    
+    var timerCircleRadius: CGFloat {
+        width / 2 - 60
+    }
 
     var body: some View {
         VStack(spacing: 60) {
@@ -30,8 +34,10 @@ struct TimerView: View {
                     minutes: viewModel.durationMinutes
                 )
                 .fill(Color.red)
-                .frame(width: width, height: height)
-                MinuteTicks(radius: width / 2)
+                .frame(width: timerCircleRadius * 2, height: timerCircleRadius * 2)
+                .shadow(radius: 5, x: 0, y: 2)
+                
+                MinuteTicks(radius: timerCircleRadius)
                 if viewModel.isFinished {
                     Text("⏰ Done!")
                         .font(.title)
@@ -40,27 +46,14 @@ struct TimerView: View {
                 }
                 MinuteDial(durationMinutes: $viewModel.durationMinutes, progress: viewModel.progress, radius: width / 2)
             }
-
-            Button(action: {
-                if viewModel.isRunning {
-                    viewModel.reset()
-                } else {
-                    viewModel.start()
-                }
-            }) {
-                Text(viewModel.isRunning ? "RESET" : "START")
-                    .font(.title)
-                    .bold()
-                    .foregroundColor(.black)
-            }
-            .offset(y: 15)
-
-            TimeLabel(seconds: viewModel.remainingSeconds)
         }
         .onAppear {
             viewModel.restoreTimerIfNeeded()
         }
+        .background(.white)
+        
     }
+        
 
     private func calculateProgress() -> Double {
         let total = Double(viewModel.durationMinutes * 60)

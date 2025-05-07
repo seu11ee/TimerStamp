@@ -22,9 +22,9 @@ struct MinuteDial: View {
         GeometryReader { geo in
             let center = CGPoint(x: radius, y: radius)
             
-            RadiusStick(radius: radius)
-                .fill(Color.accentColor)
+            RadiusStickView(radius: radius)
                 .frame(width: radius * 2, height: radius * 2)
+                .shadow(radius: 4)
                 .position(center)
                 .rotationEffect(.degrees(rotation + dragRotation))
                 .gesture(

@@ -9,21 +9,38 @@ import SwiftUI
 
 struct RadiusStick: Shape {
     var radius: CGFloat
-    var stickWidth: CGFloat = 8
-    
+    var stickWidth: CGFloat = 1
+
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        
+
         let center = CGPoint(x: rect.midX, y: rect.midY)
-        
-        // 막대의 시작점과 끝점 계산
-        let start = center
-        let end = CGPoint(x: center.x, y: center.y - radius) // 위쪽 방향으로 radius만큼
-        
-        // 막대 그리기
-        path.move(to: start)
+        let end = CGPoint(x: center.x, y: center.y - radius)
+
+        path.move(to: center)
         path.addLine(to: end)
-        
+
         return path.strokedPath(.init(lineWidth: stickWidth, lineCap: .round))
+    }
+}
+
+struct RadiusStickView: View {
+    var radius: CGFloat
+    var stickWidth: CGFloat = 25
+    var centerDotRadius: CGFloat = 25
+
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                RadiusStick(radius: radius, stickWidth: stickWidth)
+                    .foregroundColor(.white)
+                    .opacity(0.011)
+                // 중심 원은 항상 위에 있도록 ZStack의 마지막에 위치
+                Circle()
+                    .fill(Color.white)
+                    .frame(width: centerDotRadius * 2, height: centerDotRadius * 2)
+                    .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+            }
+        }
     }
 }

@@ -9,15 +9,30 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var viewModel = PhotoSelectionViewModel()
-    let timerView: TimerView = TimerView(viewModel: TimerViewModel(), width: 280, height: 280)
+    @StateObject private var timerViewModel = TimerViewModel()
+    let timerViewWidth = UIScreen.main.bounds.width - 6
     var body: some View {
         TabView {
             VStack(spacing: 30) {
                 // ✅ 타이머 뷰는 항상 표시
-                timerView
-                    .offset(y: 30)
-                // ✅ 타이머가 ended 상태일 때만 버튼 표시
-                if timerView.viewModel.state == .idle {
+                TimerView(viewModel: timerViewModel, width: timerViewWidth, height: timerViewWidth)
+                                    .offset(y: 30)
+                Button(action: {
+                    if timerViewModel.isRunning {
+                        timerViewModel.reset()
+                    } else {
+                        timerViewModel.start()
+                    }
+                }) {
+                    Text(timerViewModel.isRunning ? "RESET" : "START")
+                        .font(.title)
+                        .bold()
+                        .foregroundColor(.black)
+                }
+                .offset(y: 15)
+
+                TimeLabel(seconds: timerViewModel.remainingSeconds)
+                if timerViewModel.state == .idle {
                     Button("📷 사진 선택하기") {
                         viewModel.isShowingSourceDialog = true
                     }.offset(y: 50)
@@ -47,7 +62,7 @@ struct ContentView: View {
                 if let image = viewModel.selectedImage {
                     CertificationModalView(
                         baseImage: image,
-                        minutes: timerView.viewModel.durationMinutes,
+                        minutes: timerViewModel.durationMinutes,
                         onDismiss: {
                             viewModel.dismissModal()
                         }
@@ -68,6 +83,7 @@ struct ContentView: View {
                 .padding()
             }
         }
+        .background(Color.white) // 배경 흰색 설정
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
     }
 }
