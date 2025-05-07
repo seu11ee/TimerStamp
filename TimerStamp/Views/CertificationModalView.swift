@@ -14,6 +14,7 @@ struct CertificationModalView: View {
     @State private var hasRendered = false
     @State private var composedImage: UIImage?
     @State private var showShareSheet = false
+    @State private var showSaveConfirmation = false
     
     var body: some View {
         VStack(spacing: 24) {
@@ -25,7 +26,6 @@ struct CertificationModalView: View {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()
-                    .frame(maxWidth: 300, maxHeight: 300)
                     .cornerRadius(12)
                     .shadow(radius: 5)
             } else {
@@ -83,6 +83,11 @@ struct CertificationModalView: View {
     func saveImage() {
         guard let image = composedImage else { return }
         UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "완료", message: "이미지가 저장되었습니다!", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default))
+            UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
+        }
     }
     
     var formattedDate: String {
