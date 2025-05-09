@@ -78,24 +78,45 @@ struct CertificationModalView: View {
                 ActivityView(activityItems: [image])
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .imageSaveCompleted)) { notification in
+            if let success = notification.object as? Bool {
+                showSaveConfirmation = true
+            }
+        }
+        .alert("완료", isPresented: $showSaveConfirmation) {
+            Button("확인", role: .cancel) { }
+        } message: {
+            Text("이미지가 저장되었습니다!")
+        }
     }
     
     func saveImage() {
         guard let image = composedImage else { return }
-        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-        DispatchQueue.main.async {
-            let alert = UIAlertController(title: "완료", message: "이미지가 저장되었습니다!", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "확인", style: .default))
-            UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
-        }
+        UIImageWriteToSavedPhotosAlbum(image, ImageSaveHelper.shared, #selector(ImageSaveHelper.didFinishSaving(_:didFinishSavingWithError:contextInfo:)), nil)
     }
-    
+
     var formattedDate: String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         return formatter.string(from: Date())
     }
+}
+
+class ImageSaveHelper: NSObject {
+    static let shared = ImageSaveHelper()
+    var onSaveCompletion: ((Bool) -> Void)?
+
+    @objc func didFinishSaving(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        DispatchQueue.main.async {
+            let success = (error == nil)
+            NotificationCenter.default.post(name: .imageSaveCompleted, object: success)
+        }
+    }
+}
+
+extension Notification.Name {
+    static let imageSaveCompleted = Notification.Name("imageSaveCompleted")
 }
 
 enum ComposedImageRenderer {
