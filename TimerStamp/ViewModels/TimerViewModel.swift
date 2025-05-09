@@ -14,14 +14,12 @@ final class TimerViewModel: ObservableObject {
     @Published var state: TimerState = .idle
     @Published var durationMinutes: Int = 25 {
         didSet {
-            if !isRunning {
+            if state != .running {
                 reset()
             }
         }
     }
     @Published var remainingSeconds: Int = 25 * 60
-    @Published var isRunning: Bool = false
-    @Published var isFinished: Bool = false
     var progress: Double {
         let total = Double(durationMinutes * 60)
         return total > 0 ? Double(remainingSeconds) / total : 1.0
@@ -43,25 +41,24 @@ final class TimerViewModel: ObservableObject {
  
     // MARK: - Timer Control
     func start() {
-        guard !isRunning && !isFinished else { return }
+        guard state != .running && state != .ended else { return }
 
-        isRunning = true
-        isFinished = false
+        state = .running
         remainingSeconds = durationMinutes * 60
         endDate = Date().addingTimeInterval(TimeInterval(remainingSeconds))
 
         startTicking()
         scheduleNotification()
+        LiveActivityManager.start(durationMinutes: durationMinutes)
     }
 
     func reset() {
         timer?.invalidate()
         timer = nil
-        isRunning = false
-        isFinished = false
+        LiveActivityManager.end()
         remainingSeconds = durationMinutes * 60
         endDate = nil
-
+        state = .idle
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [NotificationIdentifier.timerDone])
     }
 
@@ -78,7 +75,7 @@ final class TimerViewModel: ObservableObject {
 
         let seconds = max(Int(end.timeIntervalSinceNow), 0)
         remainingSeconds = seconds
-
+        LiveActivityManager.update(remainingSeconds: seconds)
         if seconds == 0 {
             finish()
         }
@@ -87,8 +84,8 @@ final class TimerViewModel: ObservableObject {
     private func finish() {
         timer?.invalidate()
         timer = nil
-        isRunning = false
-        isFinished = true
+        state = .ended
+        LiveActivityManager.end()
     }
 
     // MARK: - App State Handling
@@ -102,8 +99,7 @@ final class TimerViewModel: ObservableObject {
         remainingSeconds = seconds
 
         if seconds > 0 {
-            isRunning = true
-            isFinished = false
+            state = .running
             startTicking()
         } else {
             finish()
@@ -129,5 +125,3 @@ final class TimerViewModel: ObservableObject {
         UNUserNotificationCenter.current().add(request)
     }
 }
-
-

@@ -81,7 +81,6 @@ struct MinuteDial: View {
         .onChange(of: progress) { newValue in
             withAnimation(.linear(duration: 1)) {
                 if !isDragging {
-                    print("rotation 갱신")
                     rotation = progress * Double(durationMinutes) * 6
                 }
             }

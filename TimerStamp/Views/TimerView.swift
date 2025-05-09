@@ -38,12 +38,6 @@ struct TimerView: View {
                 .shadow(radius: 5, x: 0, y: 2)
                 
                 MinuteTicks(radius: timerCircleRadius)
-                if viewModel.isFinished {
-                    Text("⏰ Done!")
-                        .font(.title)
-                        .bold()
-                        .foregroundColor(.green)
-                }
                 MinuteDial(durationMinutes: $viewModel.durationMinutes, progress: viewModel.progress, radius: width / 2)
             }
         }
@@ -58,22 +52,5 @@ struct TimerView: View {
     private func calculateProgress() -> Double {
         let total = Double(viewModel.durationMinutes * 60)
         return total > 0 ? Double(viewModel.remainingSeconds) / total : 1.0
-    }
-}
-
-struct TimeLabel: View {
-    let seconds: Int
-    
-    var body: some View {
-        Text(Self.formatTime(seconds: seconds))
-            .font(.title)
-            .monospacedDigit()
-            .bold()
-    }
-    
-    static func formatTime(seconds: Int) -> String {
-        let m = seconds / 60
-        let s = seconds % 60
-        return String(format: "%02d:%02d", m, s)
     }
 }
