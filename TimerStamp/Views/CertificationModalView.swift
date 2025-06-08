@@ -20,7 +20,6 @@ struct CertificationModalView: View {
         VStack(spacing: 24) {
             Text("인증 사진")
                 .font(.title2)
-                .bold()
             
             if let image = composedImage {
                 Image(uiImage: image)
@@ -37,6 +36,7 @@ struct CertificationModalView: View {
                 Button(action: onDismiss) {
                     Text("닫기")
                         .frame(maxWidth: .infinity)
+                    
                 }
                 
                 Button(action: saveImage) {

@@ -13,7 +13,7 @@ struct TimerLiveActivityConfiguration: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: TimerAttributes.self) { context in
             // Lock screen UI
-            LiveActivityView(context: context)
+            LiveActivityView(contentState: context.state)
         } dynamicIsland: { context in
             let remaining = max(0, context.state.endDate.timeIntervalSinceNow)
             let timerText = {
@@ -26,7 +26,7 @@ struct TimerLiveActivityConfiguration: Widget {
             return DynamicIsland {
                 // Expanded View (길게 눌렀을 때)
                 DynamicIslandExpandedRegion(.center) {
-                    LiveActivityView(context: context)
+                    LiveActivityView(contentState: context.state)
                 }
             } compactLeading: {
                 progressView(context: context)

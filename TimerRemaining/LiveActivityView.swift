@@ -9,45 +9,69 @@ import SwiftUI
 import WidgetKit
 
 struct LiveActivityView: View {
-    let context: ActivityViewContext<TimerAttributes>
-    
+    let contentState: TimerAttributes.ContentState
+
     var body: some View {
-        let remaining = max(0, context.state.endDate.timeIntervalSinceNow)
+        let remaining = max(0, contentState.endDate.timeIntervalSinceNow)
+        let remainingText = timeString(from: remaining)
 
-        HStack(spacing: 32) {
-            Image(systemName: "clock")
-                .font(.title)
-                .foregroundColor(.accentColor)
-
-            if context.state.isPaused {
-                Button(action: {
-                    // Placeholder for resume action
-                }) {
-                    Image(systemName: "play.fill")
-                        .font(.title)
-                        .background(Circle().fill(Color(.systemGray5)))
-                }
+        HStack(alignment: .center, spacing: 40) {
+            // Reset 버튼
+            Image(systemName: "arrow.counterclockwise")
+                .font(.system(size: 24, weight: .medium))
+                .foregroundColor(.white)
+                .frame(width: 50, height: 50)
+                .background(Circle().fill(Color.gray))
+                .padding(.leading, 20)
+            // 상태 버튼 (Pause / Resume)
+            if contentState.isPaused {
+                Image(systemName: "play.fill")
+                    .font(.system(size: 24, weight: .medium))
+                    .foregroundColor(.white)
+                    .background(Circle().fill(Color.gray))
             } else {
-                Button(action: {
-                    // Placeholder for pause action
-                }) {
-                    Image(systemName: "pause.fill")
-                        .font(.title)
-                        .background(Circle().fill(Color(.systemGray5)))
-                }
+                Image(systemName: "pause.fill")
+                    .font(.system(size: 24, weight: .medium))
+                    .foregroundColor(.white)
+                    .frame(width: 50, height: 50)
+                    .background(Circle().fill(Color.gray))
             }
-            if context.state.isPaused {
-                Text(timeString(from: remaining))
+            Spacer()
+            // 남은 시간
+            if contentState.isPaused {
+                Text(remainingText)
+                    .font(.system(size: 28, weight: .medium))
+                    .monospacedDigit()
+                    .foregroundColor(Color(.label))
+                    .frame(minWidth: 80)
+                    .layoutPriority(100)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
             } else {
                 Text(Date(timeIntervalSinceNow: remaining), style: .timer)
+                    .font(.system(size: 28, weight: .medium))
+                    .monospacedDigit()
+                    .foregroundColor(Color(.label))
+                    .frame(minWidth: 80)
+                    .layoutPriority(100)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-        .padding()
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+//        .background(Color.yellow)
+        .foregroundStyle(.black)
     }
+
     private func timeString(from interval: TimeInterval) -> String {
-            let minutes = Int(interval) / 60
-            let seconds = Int(interval) % 60
-            return String(format: "%02d:%02d", minutes, seconds)
-        }
+        let minutes = Int(interval) / 60
+        let seconds = Int(interval) % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+}
+
+#Preview {
+    LiveActivityView(contentState: TimerAttributes.previewContentState)
 }

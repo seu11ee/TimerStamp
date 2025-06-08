@@ -14,7 +14,7 @@ struct TimeLabel: View {
         Text(Self.formatTime(seconds: seconds))
             .font(.title)
             .monospacedDigit()
-            .bold()
+            .fontWeight(.light)
     }
     
     static func formatTime(seconds: Int) -> String {
