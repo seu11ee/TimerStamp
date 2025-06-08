@@ -22,6 +22,9 @@ struct ContentView: View {
                             TimerView(viewModel: timerViewModel, width: timerViewWidth, height: timerViewWidth)
                             
                             VStack(spacing: 20) {
+                                Text("분침을 돌려 시간을 설정하세요")
+                                    .opacity(timerViewModel.state == .idle ? 1 : 0)
+                                    .fontWeight(.light)
                                 resetOrStartButton
                                 
                                 TimeLabel(seconds: timerViewModel.remainingSeconds)
@@ -48,7 +51,7 @@ struct ContentView: View {
                                 Button("📷 인증 사진 만들기") {
                                     viewModel.isShowingSourceDialog = true
                                 }
-                                .buttonStyle(.plain)
+                                
                             }
                         }
                     }
@@ -96,10 +99,17 @@ struct ContentView: View {
             switch timerViewModel.state {
             case .idle:
                 Button("START") {
-                    timerViewModel.start()
+                    timerViewModel.start(durationMinutes: timerViewModel.durationMinutes)
                 }
-                
-            case .running, .ended:
+            case .paused:
+                Button("RESUME") {
+                    timerViewModel.resume()
+                }
+            case .running:
+                Button("PAUSE") {
+                    timerViewModel.pause()
+                }
+            case .ended:
                 Button("RESET") {
                     timerViewModel.reset()
                 }
@@ -115,4 +125,13 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+//    let size = UIScreen.main.bounds.width - 30
+//    TimerView(viewModel: TimerViewModel(durationMinutes: 25), width: size, height: size)
+//        .frame(width: size, height: size) // 명확한 크기 지정
+//        .clipShape(RoundedRectangle(cornerRadius: size / 4)) // 코너 라운딩
+//        .overlay( // 테두리 오버레이 추가
+//            RoundedRectangle(cornerRadius: size / 4)
+//                .stroke(Color.black, lineWidth: 17) // 테두리 색상 및 두께
+//                .opacity(0.7)
+//        )
 }

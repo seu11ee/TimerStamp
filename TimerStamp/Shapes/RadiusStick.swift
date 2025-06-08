@@ -26,7 +26,7 @@ struct RadiusStick: Shape {
 
 struct RadiusStickView: View {
     var radius: CGFloat
-    var stickWidth: CGFloat = 25
+    var stickWidth: CGFloat = 10
     var centerDotRadius: CGFloat = 25
 
     var body: some View {
@@ -34,7 +34,6 @@ struct RadiusStickView: View {
             ZStack {
                 RadiusStick(radius: radius, stickWidth: stickWidth)
                     .foregroundColor(.white)
-                    .opacity(0.011)
                 // 중심 원은 항상 위에 있도록 ZStack의 마지막에 위치
                 Circle()
                     .fill(Color.white)

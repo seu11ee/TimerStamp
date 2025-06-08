@@ -13,6 +13,6 @@ struct TimerRemainingBundle: WidgetBundle {
     var body: some Widget {
         TimerRemaining()
         TimerRemainingControl()
-        TimerRemainingLiveActivity()
+        TimerLiveActivityConfiguration()
     }
 }

@@ -11,6 +11,7 @@ enum TimerState {
     case idle
     case running
     case ended
+    case paused
 }
 
 struct TimerView: View {
@@ -38,10 +39,11 @@ struct TimerView: View {
                 .shadow(radius: 5, x: 0, y: 2)
                 
                 MinuteTicks(radius: timerCircleRadius)
-                MinuteDial(durationMinutes: $viewModel.durationMinutes, progress: viewModel.progress, radius: width / 2)
+                MinuteDial(durationMinutes: $viewModel.durationMinutes, progress: viewModel.progress, radius: timerCircleRadius * 0.9)
             }
         }
         .onAppear {
+            viewModel.resetStatus()
             viewModel.restoreTimerIfNeeded()
         }
         .background(.white)

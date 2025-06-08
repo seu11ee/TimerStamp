@@ -67,6 +67,13 @@
 			);
 			target = B8B32C1A2DB13B2600CD65B3 /* TimerStamp */;
 		};
+		B8BAFFA12DEC388500DA9B24 /* Exceptions for "TimerRemaining" folder in "TimerStamp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				LiveActivityView.swift,
+			);
+			target = B8B32C1A2DB13B2600CD65B3 /* TimerStamp */;
+		};
 		B8E98DD52DCDF143005731D9 /* Exceptions for "TimerRemaining" folder in "TimerRemainingExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -107,6 +114,7 @@
 		B8E98DC12DCDF142005731D9 /* TimerRemaining */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				B8BAFFA12DEC388500DA9B24 /* Exceptions for "TimerRemaining" folder in "TimerStamp" target */,
 				B8E98DD52DCDF143005731D9 /* Exceptions for "TimerRemaining" folder in "TimerRemainingExtension" target */,
 			);
 			path = TimerRemaining;

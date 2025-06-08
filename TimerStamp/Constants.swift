@@ -6,5 +6,5 @@
 //
 
 enum NotificationIdentifier {
-    static let timerDone = "timer_done"
+    static let timerDone = "timerDone"
 }
