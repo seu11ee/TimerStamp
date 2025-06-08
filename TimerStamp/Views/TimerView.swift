@@ -39,7 +39,7 @@ struct TimerView: View {
                 .shadow(radius: 5, x: 0, y: 2)
                 
                 MinuteTicks(radius: timerCircleRadius)
-                MinuteDial(durationMinutes: $viewModel.durationMinutes, progress: viewModel.progress, radius: timerCircleRadius * 0.9)
+                MinuteDial(durationMinutes: $viewModel.durationMinutes, remainingTime: $viewModel.remainingSeconds, radius: timerCircleRadius * 0.9)
             }
         }
         .onAppear {

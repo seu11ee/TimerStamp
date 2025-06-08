@@ -19,9 +19,16 @@ final class TimerViewModel: ObservableObject {
             }
         }
     }
-    @Published var remainingSeconds: Int = 25 * 60
+    @Published var remainingSeconds: Int = 25 * 60 {
+        didSet {
+            print("remainingSeconds didSet", remainingSeconds)
+        }
+    }
+    
+    
     var progress: Double {
         let total = Double(durationMinutes * 60)
+        print("set the progress: \(total)", Double(remainingSeconds) / total)
         return total > 0 ? Double(remainingSeconds) / total : 1.0
     }
     
@@ -41,10 +48,9 @@ final class TimerViewModel: ObservableObject {
     }
     
     // MARK: - Timer Control
-    func start(durationMinutes: Int) {
+    func start() {
         guard state == .idle || state == .ended else { return }
-        
-        self.durationMinutes = durationMinutes
+
         self.remainingSeconds = durationMinutes * 60
         self.startDate = Date()
         self.endDate = startDate?.addingTimeInterval(TimeInterval(remainingSeconds))
@@ -57,12 +63,13 @@ final class TimerViewModel: ObservableObject {
     }
     
     func reset() {
+        objectWillChange.send()
         timer?.invalidate()
         timer = nil
         endDate = nil
-        remainingSeconds = durationMinutes * 60
+        self.remainingSeconds = durationMinutes * 60
         state = .idle
-        print("durationMinutes", durationMinutes)
+        print("reset")
         
         LiveActivityManager.end()
         cancelNotification()
