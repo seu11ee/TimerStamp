@@ -11,7 +11,7 @@ import Combine
 
 final class TimerViewModel: ObservableObject {
     // MARK: - Public Properties
-    @Published var state: TimerState = .idle
+    @Published var state: TimerState = .ended
     @Published var durationMinutes: Int = 25 {
         didSet {
             if state != .running {

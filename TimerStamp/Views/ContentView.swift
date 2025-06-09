@@ -20,13 +20,13 @@ struct ContentView: View {
                 Text("분침을 돌려 시간을 설정하세요")
                     .font(.body)
                     .fontWeight(.light)
-                    .foregroundColor(.black)
+                    .foregroundColor(.mainText)
             }
             else if timerViewModel.state == .ended {
                 Text("👏 \(timerViewModel.durationMinutes)분 집중 완료!")
                     .font(.body)
                     .fontWeight(.light)
-                    .foregroundColor(.black)
+                    .foregroundColor(.mainText)
             }
             else {
                 Text("분침을 돌려 시간을 설정하세요")
@@ -50,10 +50,10 @@ struct ContentView: View {
                         Text("인증 사진 만들기")
                             .font(.body)
                     }
-                    .foregroundColor(.white)
+                    .foregroundColor(.mainButtonText)
                     .frame(height: 50)
                     .frame(maxWidth: .infinity)
-                    .background(Color.black)
+                    .background(Color.mainButton)
                     .cornerRadius(10)
                     .padding(.horizontal, 30)
                 }
@@ -65,10 +65,10 @@ struct ContentView: View {
                 }) {
                     Image(systemName: "arrow.counterclockwise")
                         .font(.system(size: 30, weight: .light))
-                        .foregroundColor(.white)
+                        .foregroundColor(.mainButtonText)
                         .background(
                             Circle()
-                                .fill(Color.gray)
+                                .fill(.playButtonEnabled)
                                 .frame(width: 65, height: 65)
                         )
                 }
@@ -87,18 +87,19 @@ struct ContentView: View {
                 }) {
                     Image(systemName: timerViewModel.state == .running ? "pause.fill" : "play.fill")
                         .font(.system(size: 30, weight: .light))
-                        .foregroundColor(.white)
+                        .foregroundColor(.mainButtonText)
                         .background(
                             Circle()
-                                .fill(Color.gray)
+                                .fill(Color.playButtonEnabled)
                                 .frame(width: 65, height: 65)
                         )
                 }
             }
+            .padding(.top, 12)
             
             Spacer()
         }
-        .background(Color.white)
+        .background(Color.mainBackground)
         .confirmationDialog("사진을 어떻게 가져올까요?", isPresented: $viewModel.isShowingSourceDialog, titleVisibility: .visible) {
             Button("사진 찍기") {
                 viewModel.selectSource(.camera)
@@ -155,7 +156,7 @@ private var resetOrStartButton: some View {
     }
     .font(.title)
     .bold()
-    .foregroundColor(.black)
+    .foregroundColor(.mainButton)
     .buttonStyle(.bordered)
 }
 }

@@ -34,7 +34,7 @@ struct TimerView: View {
                     progress: viewModel.progress,
                     minutes: viewModel.durationMinutes
                 )
-                .fill(Color.red)
+                .fill(Color.timerRed)
                 .frame(width: timerCircleRadius * 2, height: timerCircleRadius * 2)
                 .shadow(radius: 5, x: 0, y: 2)
                 
