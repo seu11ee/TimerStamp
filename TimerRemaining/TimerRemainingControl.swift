@@ -10,7 +10,7 @@ import SwiftUI
 import WidgetKit
 
 struct TimerRemainingControl: ControlWidget {
-    static let kind: String = "LeeYeseul.TimerStamp.TimerRemaining"
+    static let kind: String = "com.yeseullee.timerstamp.TimerRemaining"
 
     var body: some ControlWidgetConfiguration {
         AppIntentControlConfiguration(

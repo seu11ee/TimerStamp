@@ -79,12 +79,9 @@ struct MinuteDial: View {
             resetRotation()
         }
         .onChange(of: remainingTime) { newValue in
-//            withAnimation(.linear(duration: 1)) {
-                if !isDragging {
-                    rotation = Double(remainingTime) / 10.0
-                    print("remaingTime onchanged", rotation)
-                }
-//            }
+            if !isDragging {
+                rotation = Double(remainingTime) / 10.0
+            }
         }
         
         

@@ -11,7 +11,7 @@ import Combine
 
 final class TimerViewModel: ObservableObject {
     // MARK: - Public Properties
-    @Published var state: TimerState = .ended
+    @Published var state: TimerState = .idle
     @Published var durationMinutes: Int = 25 {
         didSet {
             if state != .running {
@@ -19,16 +19,10 @@ final class TimerViewModel: ObservableObject {
             }
         }
     }
-    @Published var remainingSeconds: Int = 25 * 60 {
-        didSet {
-            print("remainingSeconds didSet", remainingSeconds)
-        }
-    }
-    
+    @Published var remainingSeconds: Int = 25 * 60
     
     var progress: Double {
         let total = Double(durationMinutes * 60)
-        print("set the progress: \(total)", Double(remainingSeconds) / total)
         return total > 0 ? Double(remainingSeconds) / total : 1.0
     }
     
@@ -69,7 +63,6 @@ final class TimerViewModel: ObservableObject {
         endDate = nil
         self.remainingSeconds = durationMinutes * 60
         state = .idle
-        print("reset")
         
         LiveActivityManager.end()
         cancelNotification()
