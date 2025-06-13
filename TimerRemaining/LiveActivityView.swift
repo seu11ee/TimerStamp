@@ -8,6 +8,16 @@
 import SwiftUI
 import WidgetKit
 
+private extension View {
+    func circularButtonStyle() -> some View {
+        self
+            .font(.system(size: 24, weight: .medium))
+            .foregroundColor(.white)
+            .frame(width: 50, height: 50)
+            .background(Circle().fill(Color.gray))
+    }
+}
+
 struct LiveActivityView: View {
     let contentState: TimerAttributes.ContentState
 
@@ -15,24 +25,11 @@ struct LiveActivityView: View {
         HStack(alignment: .center, spacing: 40) {
             // Reset 버튼
             Image(systemName: "arrow.counterclockwise")
-                .font(.system(size: 24, weight: .medium))
-                .foregroundColor(.white)
-                .frame(width: 50, height: 50)
-                .background(Circle().fill(Color.gray))
+                .circularButtonStyle()
                 .padding(.leading, 20)
             // 상태 버튼 (Pause / Resume)
-            if contentState.isPaused {
-                Image(systemName: "play.fill")
-                    .font(.system(size: 24, weight: .medium))
-                    .foregroundColor(.white)
-                    .background(Circle().fill(Color.gray))
-            } else {
-                Image(systemName: "pause.fill")
-                    .font(.system(size: 24, weight: .medium))
-                    .foregroundColor(.white)
-                    .frame(width: 50, height: 50)
-                    .background(Circle().fill(Color.gray))
-            }
+            Image(systemName: contentState.isPaused ? "play.fill" : "pause.fill")
+                .circularButtonStyle()
             Spacer()
             // 남은 시간
             var remainingText: Text {

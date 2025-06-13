@@ -29,11 +29,13 @@ struct TimerLiveActivityConfiguration: Widget {
                     LiveActivityView(contentState: context.state)
                 }
             } compactLeading: {
-                progressView(context: context)
+                    progressView(context: context)
             } compactTrailing: {
-                timerText
+                    timerText
+                        .monospacedDigit()
+                        .frame(maxWidth: 49)
             } minimal: {
-                progressView(context: context)
+                    progressView(context: context)
             }
         }
         

@@ -560,7 +560,7 @@
 				CODE_SIGN_ENTITLEMENTS = TimerStamp/TimerStamp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"TimerStamp/Preview Content\"";
 				DEVELOPMENT_TEAM = 4YXV56BSN6;
 				ENABLE_PREVIEWS = YES;
@@ -599,7 +599,7 @@
 				CODE_SIGN_ENTITLEMENTS = TimerStamp/TimerStamp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"TimerStamp/Preview Content\"";
 				DEVELOPMENT_TEAM = 4YXV56BSN6;
 				ENABLE_PREVIEWS = YES;
