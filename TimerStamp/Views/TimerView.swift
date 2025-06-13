@@ -27,7 +27,8 @@ struct TimerView: View {
     var body: some View {
         VStack(spacing: 60) {
             ZStack {
-                
+                Color.mainBackground
+                    .ignoresSafeArea()
                 MinuteLabels(width: width, height: height)
 
                 PieSlice(

@@ -13,7 +13,7 @@ struct MinuteTicks: View {
         ForEach(0..<60) { index in
             let angle = Angle.degrees(Double(index) * -6)
             Capsule()
-                .fill(index % 5 == 0 ? Color.black : Color.gray)
+                .fill(Color.playButtonEnabled)
                 .frame(width: 3, height: index % 5 == 0 ? 12 : 6)
                 .offset(y: -radius - 6)  // 외부에서 전달된 반지름 적용
                 .rotationEffect(angle)

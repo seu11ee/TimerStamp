@@ -23,7 +23,7 @@ struct MinuteLabels: View {
             VStack {
                 Text("\(minute)")
                     .font(.system(size: 24, weight: .regular))
-                    .foregroundColor(.black)
+                    .foregroundColor(.mainText)
                     .rotationEffect(-angle)
                     .offset(y: 12)
                 Spacer()
