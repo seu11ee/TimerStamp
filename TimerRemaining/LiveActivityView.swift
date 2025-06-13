@@ -12,9 +12,6 @@ struct LiveActivityView: View {
     let contentState: TimerAttributes.ContentState
 
     var body: some View {
-        let remaining = max(0, contentState.endDate.timeIntervalSinceNow)
-        let remainingText = timeString(from: remaining)
-
         HStack(alignment: .center, spacing: 40) {
             // Reset 버튼
             Image(systemName: "arrow.counterclockwise")
@@ -38,30 +35,25 @@ struct LiveActivityView: View {
             }
             Spacer()
             // 남은 시간
-            if contentState.isPaused {
-                Text(remainingText)
-                    .font(.system(size: 28, weight: .medium))
-                    .monospacedDigit()
-                    .foregroundColor(Color(.label))
-                    .frame(minWidth: 80)
-                    .layoutPriority(100)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.5)
-            } else {
-                Text(Date(timeIntervalSinceNow: remaining), style: .timer)
-                    .font(.system(size: 28, weight: .medium))
-                    .monospacedDigit()
-                    .foregroundColor(Color(.label))
-                    .frame(minWidth: 80)
-                    .layoutPriority(100)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.5)
+            var remainingText: Text {
+                if contentState.isPaused {
+                    return Text(timeString(from: contentState.remainingTime))
+                }
+                return Text(Date(timeIntervalSinceNow: contentState.remainingTime), style: .timer)
             }
+            
+            remainingText
+                .font(.system(size: 28, weight: .medium))
+                .monospacedDigit()
+                .foregroundColor(Color(.label))
+                .frame(minWidth: 80)
+                .layoutPriority(100)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-//        .background(Color.yellow)
         .foregroundStyle(.black)
     }
 

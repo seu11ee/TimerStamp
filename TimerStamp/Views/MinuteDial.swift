@@ -9,8 +9,9 @@ import SwiftUI
 
 struct MinuteDial: View {
     @Binding var durationMinutes: Int
-    @Binding var remainingTime: Int
+    @Binding var remainingTime: TimeInterval
     var radius: CGFloat
+    var isRunning: Bool
     
     @GestureState private var dragRotation: Double = 0
     @GestureState private var isDragging = false
@@ -28,6 +29,7 @@ struct MinuteDial: View {
                 .position(center)
                 .rotationEffect(.degrees(rotation + dragRotation))
                 .gesture(
+                    isRunning ? nil :
                     DragGesture()
                         .updating($dragRotation) { value, state, _ in
                             let location = value.location
@@ -78,9 +80,9 @@ struct MinuteDial: View {
         .onAppear {
             resetRotation()
         }
-        .onChange(of: remainingTime) { newValue in
+        .onChange(of: remainingTime) { _, newValue in
             if !isDragging {
-                rotation = Double(remainingTime) / 10.0
+                rotation = remainingTime / 10.0
             }
         }
         

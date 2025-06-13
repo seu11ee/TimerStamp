@@ -10,30 +10,27 @@ import Foundation
 
 struct TimerAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
-        var startDate: Date
-        var endDate: Date
+        var endDate: Date?
         var isPaused: Bool = false
-
+        var pausedRemainingTime: TimeInterval = 0
         var remainingTime: TimeInterval {
-            max(0, endDate.timeIntervalSinceNow)
-        }
-
-        var progress: Double {
-            let total = endDate.timeIntervalSince(startDate)
-            let elapsed = total - remainingTime
-            return total > 0 ? min(1.0, elapsed / total) : 0
+            guard let endDate = endDate else {
+                return pausedRemainingTime
+            }
+            return max(0, endDate.timeIntervalSinceNow)
         }
     }
 
-    var totalDuration: TimeInterval
-    
+    var duration: TimeInterval
+    var startDate: Date // for ProgressView
+
     // Preview를 위한 샘플 값
     static var preview: TimerAttributes {
-        TimerAttributes(totalDuration: 25)
+        TimerAttributes(duration: 25, startDate: Date())
     }
 
     static var previewContentState: ContentState {
         let now = Date()
-        return ContentState(startDate: now, endDate: now.addingTimeInterval(1500))
+        return ContentState(endDate: now.addingTimeInterval(1500))
     }
 }

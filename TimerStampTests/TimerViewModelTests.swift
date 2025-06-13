@@ -16,7 +16,7 @@ final class TimerViewModelTests: XCTestCase {
         vm.start()
         
         XCTAssertTrue(vm.isRunning)
-        XCTAssertEqual(vm.remainingSeconds, 60)
+        XCTAssertEqual(vm.remainingTime, 60)
     }
 
     func testReset_stopsTimerAndResetsState() {
@@ -27,6 +27,6 @@ final class TimerViewModelTests: XCTestCase {
         
         XCTAssertFalse(vm.isRunning)
         XCTAssertFalse(vm.isFinished)
-        XCTAssertEqual(vm.remainingSeconds, 60)
+        XCTAssertEqual(vm.remainingTime, 60)
     }
 }

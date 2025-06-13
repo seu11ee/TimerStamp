@@ -40,7 +40,7 @@ struct ContentView: View {
                 }
                 
                 if timerViewModel.state != .ended {
-                    TimeLabel(seconds: timerViewModel.remainingSeconds)
+                    TimeLabel(seconds: Int(timerViewModel.remainingTime), endDate: timerViewModel.endDate)
                         .frame(height: 50)
                 }
                 
@@ -86,7 +86,7 @@ struct ContentView: View {
                         case .running:
                             timerViewModel.pause()
                         case .ended:
-                            timerViewModel.reset()
+                            timerViewModel.start()
                         }
                     }) {
                         Image(systemName: timerViewModel.state == .running ? "pause.fill" : "play.fill")
@@ -140,11 +140,15 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            hasLaunchedBefore = false
             if hasLaunchedBefore == false {
                 showOnboarding = true
                 hasLaunchedBefore = true
+            } else {
+                UIApplication.shared.isIdleTimerDisabled = true
             }
+        }
+        .onDisappear {
+            UIApplication.shared.isIdleTimerDisabled = false
         }
     }
 
@@ -179,13 +183,4 @@ private var resetOrStartButton: some View {
 
 #Preview {
     ContentView()
-    //    let size = UIScreen.main.bounds.width - 30
-    //    TimerView(viewModel: TimerViewModel(durationMinutes: 25), width: size, height: size)
-    //        .frame(width: size, height: size) // 명확한 크기 지정
-    //        .clipShape(RoundedRectangle(cornerRadius: size / 4)) // 코너 라운딩
-    //        .overlay( // 테두리 오버레이 추가
-    //            RoundedRectangle(cornerRadius: size / 4)
-    //                .stroke(Color.black, lineWidth: 17) // 테두리 색상 및 두께
-    //                .opacity(0.7)
-    //        )
 }

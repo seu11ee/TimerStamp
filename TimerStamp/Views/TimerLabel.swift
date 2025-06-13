@@ -9,17 +9,23 @@ import SwiftUI
 
 struct TimeLabel: View {
     let seconds: Int
+    let endDate: Date?
+    
+    var timeText: some View {
+        guard let endDate = endDate else { return Text("\(TimeLabel.formatTime(seconds: seconds))") }
+        return Text(endDate, style: .timer)
+    }
     
     var body: some View {
-        Text(Self.formatTime(seconds: seconds))
-            .font(.title)
-            .monospacedDigit()
-            .fontWeight(.light)
+        timeText
+        .font(.title)
+        .monospacedDigit()
+        .fontWeight(.light)
     }
     
     static func formatTime(seconds: Int) -> String {
         let m = seconds / 60
         let s = seconds % 60
-        return String(format: "%02d:%02d", m, s)
+        return String(format: "%2d:%02d", m, s)
     }
 }

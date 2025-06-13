@@ -40,7 +40,7 @@ struct TimerView: View {
                 .shadow(radius: 5, x: 0, y: 2)
                 
                 MinuteTicks(radius: timerCircleRadius)
-                MinuteDial(durationMinutes: $viewModel.durationMinutes, remainingTime: $viewModel.remainingSeconds, radius: timerCircleRadius * 0.9)
+                MinuteDial(durationMinutes: $viewModel.durationMinutes, remainingTime: $viewModel.remainingTime, radius: timerCircleRadius * 0.9, isRunning: viewModel.state == .running)
             }
         }
         .onAppear {
@@ -54,6 +54,6 @@ struct TimerView: View {
 
     private func calculateProgress() -> Double {
         let total = Double(viewModel.durationMinutes * 60)
-        return total > 0 ? Double(viewModel.remainingSeconds) / total : 1.0
+        return total > 0 ? Double(viewModel.remainingTime) / total : 1.0
     }
 }

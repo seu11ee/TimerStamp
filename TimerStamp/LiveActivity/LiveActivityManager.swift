@@ -9,15 +9,16 @@ import ActivityKit
 import Foundation
 
 enum LiveActivityManager {
+    static var staleInterval: TimeInterval = 600
     static func start(startDate: Date, endDate: Date, totalDuration: TimeInterval) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
         
-        let contentState = TimerAttributes.ContentState(startDate: startDate, endDate: endDate)
-        let attributes = TimerAttributes(totalDuration: totalDuration)
-        let staleDate = endDate.addingTimeInterval(60)
+        let contentState = TimerAttributes.ContentState(endDate: endDate)
+        let attributes = TimerAttributes(duration: totalDuration, startDate: startDate)
+        let staleDate = endDate
                 
         do {
-            let activity = try Activity<TimerAttributes>.request(
+            let _ = try Activity<TimerAttributes>.request(
                 attributes: attributes,
                 content: .init(state: contentState, staleDate: staleDate),
                 pushType: nil
@@ -27,12 +28,13 @@ enum LiveActivityManager {
         }
     }
 
-    static func update(endDate: Date, isPaused: Bool = false) {
+    static func update(endDate: Date?, isPaused: Bool = false, pausedRemainingTime: TimeInterval = 0) {
         Task {
             for activity in Activity<TimerAttributes>.activities {
-                let currentStartDate = activity.content.state.startDate
-                let contentState = TimerAttributes.ContentState(startDate: currentStartDate, endDate: endDate, isPaused: isPaused)
-                await activity.update(using: contentState)
+                let contentState = TimerAttributes.ContentState(endDate: endDate, isPaused: isPaused, pausedRemainingTime: pausedRemainingTime)
+                print("pausedInterval", pausedRemainingTime)
+                let content = ActivityContent<TimerAttributes.ContentState>(state: contentState, staleDate: endDate ?? Date().addingTimeInterval(staleInterval))
+                await activity.update(content)
             }
         }
     }
@@ -40,7 +42,7 @@ enum LiveActivityManager {
     static func end() {
         Task {
             for activity in Activity<TimerAttributes>.activities {
-                await activity.end(dismissalPolicy: .immediate)
+                await activity.end(activity.content, dismissalPolicy: .immediate)
             }
         }
     }

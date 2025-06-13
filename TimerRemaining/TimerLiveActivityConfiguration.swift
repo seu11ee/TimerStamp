@@ -15,7 +15,7 @@ struct TimerLiveActivityConfiguration: Widget {
             // Lock screen UI
             LiveActivityView(contentState: context.state)
         } dynamicIsland: { context in
-            let remaining = max(0, context.state.endDate.timeIntervalSinceNow)
+            let remaining = max(0, context.state.remainingTime)
             let timerText = {
                 if context.state.isPaused {
                     Text(TimerLiveActivityConfiguration.format(seconds: Int(remaining)))
@@ -36,25 +36,38 @@ struct TimerLiveActivityConfiguration: Widget {
                 progressView(context: context)
             }
         }
+        
     }
 
     static func format(seconds: Int) -> String {
         let m = seconds / 60
         let s = seconds % 60
-        return String(format: "%02d:%02d", m, s)
+        return String(format: "%2d:%02d", m, s)
+    }
+    
+    func previewContext(_ context: any PreviewProvider) {
+        
     }
 }
 
 @ViewBuilder
 func progressView(context: ActivityViewContext<TimerAttributes>) -> some View {
     if context.state.isPaused {
-        let remaining = max(0, context.state.endDate.timeIntervalSinceNow)
-        let totalDuration = context.attributes.totalDuration
-        ProgressView(value: Float(remaining) / Float(totalDuration))
+        ProgressView(value: context.state.remainingTime / context.attributes.duration)
             .progressViewStyle(.circular)
+            .tint(.red)
     } else {
-        ProgressView(timerInterval: context.state.startDate...context.state.endDate, countsDown: true)
-            .progressViewStyle(.circular)
+        let elapsedSeconds = context.attributes.duration - context.state.remainingTime
+        let adjustedStartDate = Date().addingTimeInterval(-elapsedSeconds)
+        ProgressView(timerInterval: adjustedStartDate...(context.state.endDate ?? Date()), countsDown: true)
+        {
+            Text(verbatim: "")
+        } currentValueLabel: {
+            Text(verbatim: "")
+        }
+        .progressViewStyle(.circular)
+        .tint(.red)
+
     }
 }
 

@@ -199,6 +199,7 @@
 				B8B32C182DB13B2600CD65B3 /* Frameworks */,
 				B8B32C192DB13B2600CD65B3 /* Resources */,
 				B82186412DCDED46002B370E /* Embed Foundation Extensions */,
+				B80DB4F72DFAFDFA008BFBA2 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -361,6 +362,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B80DB4F72DFAFDFA008BFBA2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\nif [ \"${ACTION}\" = \"archive\" ]; then\n    buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\n    buildNumber=$(($buildNumber + 1))\n    /usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n    echo \"Updated build number to $buildNumber\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B8B32C172DB13B2600CD65B3 /* Sources */ = {
@@ -539,7 +560,7 @@
 				CODE_SIGN_ENTITLEMENTS = TimerStamp/TimerStamp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"TimerStamp/Preview Content\"";
 				DEVELOPMENT_TEAM = 4YXV56BSN6;
 				ENABLE_PREVIEWS = YES;
@@ -578,7 +599,7 @@
 				CODE_SIGN_ENTITLEMENTS = TimerStamp/TimerStamp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"TimerStamp/Preview Content\"";
 				DEVELOPMENT_TEAM = 4YXV56BSN6;
 				ENABLE_PREVIEWS = YES;
