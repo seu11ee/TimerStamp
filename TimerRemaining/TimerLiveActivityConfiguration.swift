@@ -17,10 +17,12 @@ struct TimerLiveActivityConfiguration: Widget {
         } dynamicIsland: { context in
             let remaining = max(0, context.state.remainingTime)
             let timerText = {
-                if context.state.isPaused {
-                    Text(TimerLiveActivityConfiguration.format(seconds: Int(remaining)))
-                } else {
+                if !context.state.isPaused && context.state.remainingTime > 0 {
+                    // 카운트다운 중 ➜ 자동 갱신
                     Text(Date(timeIntervalSinceNow: remaining), style: .timer)
+                } else {
+                    // 0초 이하이거나 일시정지 ➜ "00:00" 등 고정 문자열
+                    Text(TimerLiveActivityConfiguration.format(seconds: Int(remaining)))   // 예: "00:00"
                 }
             }()
             return DynamicIsland {
@@ -54,7 +56,7 @@ struct TimerLiveActivityConfiguration: Widget {
 
 @ViewBuilder
 func progressView(context: ActivityViewContext<TimerAttributes>) -> some View {
-    if context.state.isPaused {
+    if context.state.isPaused || context.state.remainingTime <= 0 {
         ProgressView(value: context.state.remainingTime / context.attributes.duration)
             .progressViewStyle(.circular)
             .tint(.red)
@@ -75,7 +77,7 @@ func progressView(context: ActivityViewContext<TimerAttributes>) -> some View {
 
 @ViewBuilder
 func timerText(context: ActivityViewContext<TimerAttributes>) -> some View {
-    if context.state.isPaused {
+    if context.state.isPaused || context.state.remainingTime <= 0 {
         Text(TimerLiveActivityConfiguration.format(seconds: Int(context.state.remainingTime)))
     } else {
         Text(Date(timeIntervalSinceNow: context.state.remainingTime), style: .timer)
