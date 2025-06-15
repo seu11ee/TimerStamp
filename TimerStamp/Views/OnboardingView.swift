@@ -11,7 +11,7 @@ struct OnboardingView: View {
     @Binding var isPresented: Bool
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .center) {
             LinearGradient(
                 gradient: Gradient(colors: [Color.black.opacity(0.6), Color.black.opacity(0.8)]),
                 startPoint: .top,
@@ -26,23 +26,26 @@ struct OnboardingView: View {
                                     .bold()
                                     .multilineTextAlignment(.center)
                                     .padding(.top, 10)
-                OnboardingFeatureRow(
-                    systemImage: "timer",
-                    title: "다이얼을 돌리고 타이머 시작",
-                    description: "원하는 시간만큼 다이얼을 돌려 집중을 시작하세요."
-                )
+                VStack(alignment: .leading, spacing: 32) {
+                    OnboardingFeatureRow(
+                        systemImage: "timer",
+                        title: "다이얼을 돌리고 타이머 시작",
+                        description: "원하는 시간만큼 다이얼을 돌려 집중을 시작하세요."
+                    )
 
-                OnboardingFeatureRow(
-                    systemImage: "checkmark.seal",
-                    title: "집중한 후 인증 사진 만들기",
-                    description: "집중을 마친 후 인증 사진을 저장하거나 공유할 수 있어요."
-                )
+                    OnboardingFeatureRow(
+                        systemImage: "checkmark.seal",
+                        title: "집중한 후 인증 사진 만들기",
+                        description: "집중을 마친 후 인증 사진을 저장하거나 공유할 수 있어요."
+                    )
+                }
+                
 
                 Button(action: {
                     isPresented = false
                 }) {
                     Text("시작하기")
-                        .frame(maxWidth: .infinity)
+                        .frame(maxWidth: 400)
                         .padding()
                         .background(Color.blue)
                         .foregroundColor(.white)
