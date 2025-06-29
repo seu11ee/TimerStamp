@@ -11,8 +11,7 @@ import SwiftUI
 struct TimerStampApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
     }
 }
-
