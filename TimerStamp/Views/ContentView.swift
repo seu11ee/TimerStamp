@@ -10,7 +10,6 @@ import SwiftUI
 struct ContentView: View {
     @AppStorage("hasLaunchedTimerStamp") private var hasLaunchedBefore: Bool = false
     @State private var showOnboarding: Bool = false
-    
     @StateObject private var viewModel = PhotoSelectionViewModel()
     @StateObject private var timerViewModel = TimerViewModel()
     var body: some View {
@@ -107,7 +106,18 @@ struct ContentView: View {
                  OnboardingView(isPresented: $showOnboarding)
             }
         }
+        .navigationTitle("타임")
         .background(Color.mainBackground)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Button("환경설정 1") { /* 설정 액션 */ }
+                    Button("환경설정 2") { /* 설정 액션 */ }
+                } label: {
+                    Image(systemName: "gearshape")
+                }
+            }
+        }
         .confirmationDialog("사진을 어떻게 가져올까요?", isPresented: $viewModel.isShowingSourceDialog, titleVisibility: .visible) {
             Button("사진 찍기") {
                 viewModel.selectSource(.camera)
