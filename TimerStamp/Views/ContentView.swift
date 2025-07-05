@@ -14,6 +14,8 @@ struct ContentView: View {
     @StateObject private var timerViewModel = TimerViewModel()
     var body: some View {
         ZStack {
+            Color.mainBackground
+                .ignoresSafeArea()
             VStack(spacing: 40) {
                 Spacer()
                 
@@ -106,7 +108,7 @@ struct ContentView: View {
                  OnboardingView(isPresented: $showOnboarding)
             }
         }
-        .navigationTitle("타임")
+        .navigationTitle("타이머")
         .background(Color.mainBackground)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
