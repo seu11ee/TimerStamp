@@ -135,7 +135,7 @@ struct StatisticsView: View {
                 .navigationTitle("통계")
                 .navigationDestination(for: String.self) { value in
                     if value == "timer" {
-                        MainTimerView()
+                        TimerScreen()
                     }
                 }
                 .toolbar {

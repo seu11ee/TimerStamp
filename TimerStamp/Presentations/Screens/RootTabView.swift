@@ -10,13 +10,9 @@ import SwiftUI
 struct RootTabView: View {
     var body: some View {
         TabView {
-            MainTimerView()
+            TimerScreen()
                 .tabItem {
                     Label("Timer", systemImage: "timer")
-                }
-            PomodoroView()
-                .tabItem {
-                    Label("Pomodoro", systemImage: "clock")
                 }
         }
     }

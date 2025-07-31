@@ -34,7 +34,7 @@ struct RootView: View {
             StatisticsView(viewModel: mockViewModel)
                 .navigationDestination(for: String.self) { value in
                     if value == "timer" {
-                        MainTimerView()
+                        TimerScreen()
                     }
                 }
                 
