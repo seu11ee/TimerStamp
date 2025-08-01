@@ -18,7 +18,7 @@ struct CertificationModalView: View {
     
     var body: some View {
         VStack(spacing: 24) {
-            Text("인증 사진")
+            Text(L10n.certTitle)
                 .font(.title2)
                 .foregroundStyle(.mainText)
             
@@ -29,13 +29,13 @@ struct CertificationModalView: View {
                     .cornerRadius(12)
                     .shadow(color: .mainText.opacity(0.2), radius: 2)
             } else {
-                ProgressView("이미지를 렌더링 중입니다...")
+                ProgressView(L10n.certRendering)
                     .frame(height: 300)
             }
             
             HStack(spacing: 16) {
                 Button(action: onDismiss) {
-                    Text("닫기")
+                    Text(L10n.certClose)
                         .foregroundColor(.mainButtonText)
                         .padding(9)
                         .frame(maxWidth: .infinity)
@@ -44,7 +44,7 @@ struct CertificationModalView: View {
                 }
                 
                 Button(action: saveImage) {
-                    Text("이미지 저장")
+                    Text(L10n.certSaveImage)
                         .foregroundColor(.mainButtonText)
                         .padding(9)
                         .frame(maxWidth: .infinity)
@@ -56,7 +56,7 @@ struct CertificationModalView: View {
                 Button(action: {
                     showShareSheet = true
                 }) {
-                    Text("공유하기")
+                    Text(L10n.certShare)
                         .foregroundColor(.mainButtonText)
                         .padding(9)
                         .frame(maxWidth: .infinity)
@@ -96,10 +96,10 @@ struct CertificationModalView: View {
                 showSaveConfirmation = true
             }
         }
-        .alert("완료", isPresented: $showSaveConfirmation) {
-            Button("확인", role: .cancel) { }
+        .alert(L10n.done, isPresented: $showSaveConfirmation) {
+            Button(L10n.ok, role: .cancel) { }
         } message: {
-            Text("이미지가 저장되었습니다!")
+            Text(L10n.photoSaveSuccess)
         }
         .background(Color.mainBackground)
     }
@@ -138,8 +138,9 @@ enum ComposedImageRenderer {
     static func render(image: UIImage, minutes: Int) -> UIImage? {
         let view = ZStack {
             GeometryReader { geo in
-                let size = 400.0
-                let center = CGPoint(x: size / 2 + 50, y: geo.size.height - size / 2 - 50.0)
+                let timerSize = 400.0
+                let radius = timerSize / 3.4
+                let margin: CGFloat = 60
                 
                 // 1. 원본 이미지
                 Image(uiImage: image)
@@ -147,44 +148,55 @@ enum ComposedImageRenderer {
                     .scaledToFill()
                     .frame(width: geo.size.width, height: geo.size.height)
                 
-                // 2. 어두운 오버레이
-                Color.black.opacity(0.1)
-                    .frame(width: geo.size.width, height: geo.size.height)
+                // 2. 그라데이션 오버레이
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.black.opacity(0),
+                        Color.black.opacity(0.3)
+                    ]),
+                    startPoint: UnitPoint(x: 0.5, y: 0.7),
+                    endPoint: .bottom
+                )
+                .frame(width: geo.size.width, height: geo.size.height)
                 
-                // 3. CircularTimerView를 흐리게 오버레이
-                CircularTimerView(viewModel: TimerViewModel(durationMinutes: minutes), width: size, height: size)
-                    .frame(width: size, height: size) // 명확한 크기 지정
-                    .clipShape(RoundedRectangle(cornerRadius: size / 4)) // 코너 라운딩
-                    .overlay( // 테두리 오버레이 추가
-                        RoundedRectangle(cornerRadius: size / 4)
-                            .inset(by: -5)
-                            .stroke(.timerStroke, lineWidth: 17) // 테두리 색상 및 두께
-                    )
-                    .shadow(radius: 10)
-                    .position(center) // 위치 지정
-                
-                // 4. 하단 텍스트
-                HStack {
-                    Spacer()
-                    VStack(alignment: .trailing){
-                        Spacer()
-                        Text("✨ \(minutes)분 집중 완료!")
-                            .font(.system(size: 62, weight: .bold))
-                            .foregroundColor(.white)
+                // 3. 절대 위치로 하단 정렬
+                ZStack(alignment: .bottom) {
+                    Color.clear
+                        .frame(width: geo.size.width, height: geo.size.height)
+                    
+                    HStack(alignment: .bottom, spacing: 0) {
+                        // 좌측: 타이머
+                        VStack(alignment: .leading) {
+                            SimpleTimerView(minutes: minutes, radius: radius)
+                                .opacity(0.7)
+                                .frame(maxHeight: .infinity, alignment: .bottom)
+                                .padding(66)
+                        }
                         
-                        Text(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))
-                            .font(.system(size: 52, weight: .bold))
-                            .foregroundColor(.white)
-                        
-                        Spacer().frame(height: 50)
+                        Spacer(minLength: 20)
+           
+                        VStack(alignment: .trailing) {
+                            Text("✨ \(L10n.focusComplete(minutes))")
+                                .font(.system(size: 66, weight: .light))
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.trailing)
+                                .lineLimit(nil)
+                                .padding(.bottom, 6)
+                            
+                            Text(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))
+                                .font(.system(size: 58, weight: .light))
+                                .foregroundColor(.white.opacity(0.95))
+                                .padding(.bottom, 10)
+                        }
+                        .frame(maxHeight: .infinity, alignment: .bottom)
                     }
+                    .padding(.horizontal, margin)
+                    .padding(.bottom, margin)
                 }
-                .padding(.trailing, 16)
-                
             }
             .frame(width: 1080, height: 1920)
         }
-            .background(Color.white)
+        .background(Color.clear)
         
         let renderer = ImageRenderer(content: view)
         renderer.proposedSize = .init(CGSize(width: 1080, height: 1920))
@@ -195,8 +207,8 @@ enum ComposedImageRenderer {
 
 #Preview {
     CertificationModalView(
-        baseImage: UIImage(systemName: "camera") ?? UIImage(),
-        minutes: 59,
+        baseImage: UIImage(named: "s2") ?? UIImage(),
+        minutes: 45,
         onDismiss: {}
     )
 }
