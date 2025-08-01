@@ -200,6 +200,7 @@
 				B8B32C192DB13B2600CD65B3 /* Resources */,
 				B82186412DCDED46002B370E /* Embed Foundation Extensions */,
 				B80DB4F72DFAFDFA008BFBA2 /* ShellScript */,
+				B86F23C62E3BAE6300320FE4 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -400,6 +401,23 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\nif [ \"${ACTION}\" = \"archive\" ]; then\n    buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\n    buildNumber=$(($buildNumber + 1))\n    /usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n    echo \"Updated build number to $buildNumber\"\nfi\n";
 		};
+		B86F23C62E3BAE6300320FE4 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# 프로젝트 루트로 이동\ncd \"${SRCROOT}\"\n\n# 디버깅용 (나중에 제거)\necho \"Working directory: $(pwd)\"\necho \"Looking for swiftgen.yml...\"\nls -la swiftgen.yml\n\n# SwiftGen 실행\nif /opt/homebrew/bin/swiftgen --version >/dev/null 2>&1; then\n  /opt/homebrew/bin/swiftgen config run --config swiftgen.yml\nelse\n  echo \"warning: SwiftGen not found\"\nfi\n\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -583,6 +601,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"TimerStamp/Preview Content\"";
 				DEVELOPMENT_TEAM = 4YXV56BSN6;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TimerStamp/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
@@ -624,6 +643,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"TimerStamp/Preview Content\"";
 				DEVELOPMENT_TEAM = 4YXV56BSN6;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TimerStamp/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";

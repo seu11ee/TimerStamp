@@ -1,0 +1,9 @@
+strings:
+  inputs:
+    - TimerStamp/Resources/L10N/ko.lproj/Localizable.strings
+  outputs:
+    - templateName: structured-swift5
+      output: TimerStamp/Generated/Strings.swift
+      params:
+        enumName: L10n
+        publicAccess: true
