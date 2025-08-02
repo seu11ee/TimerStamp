@@ -33,6 +33,7 @@ struct TimerContentView: View {
             if timerViewModel.state != .ended {
                 TimeLabel(seconds: Int(timerViewModel.remainingTime), endDate: timerViewModel.endDate)
                     .frame(height: 50)
+                    .frame(maxWidth: .infinity)
             }
 
             if timerViewModel.state == .ended {
@@ -59,14 +60,16 @@ struct TimerContentView: View {
                     timerViewModel.reset()
                 }) {
                     Image(systemName: "arrow.counterclockwise")
-                        .font(.system(size: 30, weight: .light))
+                        .font(.system(size: 30, weight: .bold))
+                        .fontWidth(.expanded)
                         .foregroundColor(.mainButtonText)
                         .background(
                             Circle()
-                                .fill(.playButtonEnabled)
+                                .fill(.resetButtonEnabled)
                                 .frame(width: 65, height: 65)
                         )
                 }
+                
 
                 Button(action: {
                     switch timerViewModel.state {
@@ -81,14 +84,17 @@ struct TimerContentView: View {
                     }
                 }) {
                     Image(systemName: timerViewModel.state == .running ? "pause.fill" : "play.fill")
-                        .font(.system(size: 30, weight: .light))
+                        .font(.system(size: 30, weight: .bold, design: .serif))
+                        .fontWidth(.expanded)
                         .foregroundColor(.mainButtonText)
                         .background(
                             Circle()
-                                .fill(Color.playButtonEnabled)
+                                .fill(timerViewModel.state == .ended ? Color.playButtonDisabled : Color.playButtonEnabled)
                                 .frame(width: 65, height: 65)
                         )
                 }
+                .disabled(timerViewModel.state == .ended)
+                
             }
             .padding(.top, 12)
 

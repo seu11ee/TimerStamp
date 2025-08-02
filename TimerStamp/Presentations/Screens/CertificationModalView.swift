@@ -168,7 +168,7 @@ enum ComposedImageRenderer {
                         // 좌측: 타이머
                         VStack(alignment: .leading) {
                             SimpleTimerView(minutes: minutes, radius: radius)
-                                .opacity(0.7)
+                                .opacity(0.74)
                                 .frame(maxHeight: .infinity, alignment: .bottom)
                                 .padding(66)
                         }
@@ -177,7 +177,9 @@ enum ComposedImageRenderer {
            
                         VStack(alignment: .trailing) {
                             Text("✨ \(L10n.focusComplete(minutes))")
-                                .font(.system(size: 66, weight: .light))
+                                .font(.system(size: 66, weight: .heavy))
+                                .fontWidth(.expanded)
+                                .kerning(-2)
                                 .foregroundColor(.white)
                                 .multilineTextAlignment(.trailing)
                                 .lineLimit(nil)
@@ -206,9 +208,29 @@ enum ComposedImageRenderer {
 }
 
 #Preview {
-    CertificationModalView(
-        baseImage: UIImage(named: "s2") ?? UIImage(),
-        minutes: 45,
-        onDismiss: {}
-    )
+    Group {
+        CertificationModalView(
+            baseImage: UIImage(named: "s2") ?? UIImage(),
+            minutes: 45,
+            onDismiss: {}
+        )
+        .environment(\.locale, .init(identifier: "en"))
+        .previewDisplayName("English")
+        
+//        CertificationModalView(
+//            baseImage: UIImage(named: "s2") ?? UIImage(),
+//            minutes: 45,
+//            onDismiss: {}
+//        )
+//        .environment(\.locale, .init(identifier: "ko"))
+//        .previewDisplayName("한국어")
+//        
+//        CertificationModalView(
+//            baseImage: UIImage(named: "s2") ?? UIImage(),
+//            minutes: 45,
+//            onDismiss: {}
+//        )
+//        .environment(\.locale, .init(identifier: "ja"))
+//        .previewDisplayName("日本語")
+    }
 }

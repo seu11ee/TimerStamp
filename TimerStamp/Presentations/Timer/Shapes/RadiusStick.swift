@@ -27,7 +27,7 @@ struct RadiusStick: Shape {
 struct RadiusStickView: View {
     var radius: CGFloat
     var stickWidth: CGFloat = 10
-    var centerDotRadius: CGFloat = 15
+    var centerDotRadius: CGFloat = 16
 
     var body: some View {
         GeometryReader { geometry in

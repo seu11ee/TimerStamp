@@ -59,7 +59,7 @@ func progressView(context: ActivityViewContext<TimerAttributes>) -> some View {
     if context.state.isPaused || context.state.remainingTime <= 0 {
         ProgressView(value: context.state.remainingTime / context.attributes.duration)
             .progressViewStyle(.circular)
-            .tint(.red)
+            .tint(Color.playButtonEnabled) // 일시정지 또는 완료 상태에서의 색상
     } else {
         let elapsedSeconds = context.attributes.duration - context.state.remainingTime
         let adjustedStartDate = Date().addingTimeInterval(-elapsedSeconds)

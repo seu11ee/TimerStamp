@@ -22,10 +22,12 @@ struct MinuteLabels: View {
             let angle = Angle.degrees(Double(minute) * 6)
             VStack {
                 Text("\(minute)")
-                    .font(.system(size: 24, weight: .light))
+                    .font(.system(size: 23, weight: .black))
+                    .fontWidth(.expanded)
+                    .kerning(-2)
                     .foregroundColor(.mainButton)
                     .rotationEffect(-angle)
-                    .offset(y: 12)
+                    .offset(y: 9)
                 Spacer()
             }
             .rotationEffect(angle)

@@ -99,7 +99,7 @@ struct TimerProgressPie: View {
     
     var body: some View {
         PieSlice(progress: progress, minutes: minutes)
-            .fill(Color.timerRed)
+            .fill(Color.timerMain)
             .frame(width: diameter, height: diameter)
             // 필요시 섀도우 활성화
             // .shadow(radius: 5, x: 0, y: 2)
@@ -120,6 +120,7 @@ struct TimerDial: View {
             radius: radius,
             isRunning: isRunning
         )
+        .animation(.easeInOut(duration: 0.3), value: isRunning) // running 상태 변화 시 애니메이션 추가
     }
 }
 
@@ -134,7 +135,7 @@ struct TimerViewSimple: View {
     
     var body: some View {
         ZStack {
-            // 배경 요소들   
+            // 배경 요소들
             TimerBackground(size: size)
             
             // 진행 상태 표시
@@ -178,7 +179,7 @@ struct TimerProgress: View {
     
     var body: some View {
         PieSlice(progress: progress, minutes: minutes)
-            .fill(Color.timerRed)
+            .fill(Color.timerMain)
             .frame(width: radius * 2, height: radius * 2)
     }
 }

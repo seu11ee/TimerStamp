@@ -20,7 +20,9 @@ struct TimeLabel: View {
         timeText
         .font(.title)
         .monospacedDigit()
-        .fontWeight(.light)
+        .fontWeight(.bold)
+        .fontWidth(.expanded)
+        .kerning(-2)
     }
     
     static func formatTime(seconds: Int) -> String {

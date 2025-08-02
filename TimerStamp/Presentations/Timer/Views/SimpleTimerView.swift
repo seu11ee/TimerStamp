@@ -25,7 +25,7 @@ struct SimpleTimerView: View {
         ZStack {
             // 정사각형 배경 추가
             Rectangle()
-                .fill(Color(.systemBackground))
+                .fill(Color.mainBackground)
                 .frame(width: radius * 3, height: radius * 3)
                 .clipShape(RoundedRectangle(cornerRadius: radius/1.5))
                 .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
