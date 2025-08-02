@@ -17,7 +17,6 @@ struct TimerScreen: View {
     var body: some View {
         ZStack {
             Color.mainBackground.ignoresSafeArea()
-
             TimerContentView(
                 timerViewModel: timerViewModel,
                 photoViewModel: photoViewModel
@@ -27,13 +26,7 @@ struct TimerScreen: View {
                 OnboardingView(isPresented: $showOnboarding)
             }
         }
-        .navigationTitle("타이머")
         .background(Color.mainBackground)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                SettingsMenu()
-            }
-        }
         .photoSelectionModals(photoViewModel: photoViewModel, timerViewModel: timerViewModel)
         .onAppear(perform: handleViewAppear)
         .onDisappear(perform: handleViewDisappear)

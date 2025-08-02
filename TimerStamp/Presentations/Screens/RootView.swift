@@ -31,13 +31,6 @@ struct RootView: View {
                     UIImage(named: "s\($0)")
                 }
             )
-            StatisticsView(viewModel: mockViewModel)
-                .navigationDestination(for: String.self) { value in
-                    if value == "timer" {
-                        TimerScreen()
-                    }
-                }
-                
         }
         .onAppear {
             DispatchQueue.main.async {
