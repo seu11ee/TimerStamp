@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "集中後に認証写真を作成";
 "onboarding_cert_desc" = " you can save or share your authentication photo.";
 "onboarding_start" = "始める";
+"notification_title_timer_done" = "タイマー完了";
+"notification_body_timer_done" = "%d分集中が終わりました！";

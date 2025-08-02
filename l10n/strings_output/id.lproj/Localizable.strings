@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "Buat foto verifikasi setelah fokus";
 "onboarding_cert_desc" = " kunt u uw authenticatie foto opslaan of delen.";
 "onboarding_start" = "Mulai";
+"notification_title_timer_done" = "Timer Selesai";
+"notification_body_timer_done" = "%d menit fokus selesai!";

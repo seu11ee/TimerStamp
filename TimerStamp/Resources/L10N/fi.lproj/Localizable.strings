@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "Luo todennuskuva keskittymisen jälkeen";
 "onboarding_cert_desc" = "Depois de terminar de focar";
 "onboarding_start" = "Aloita";
+"notification_title_timer_done" = "Ajastin valmis";
+"notification_body_timer_done" = "%d minuutin keskittyminen valmis!";

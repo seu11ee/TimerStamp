@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "Maak een authenticatie foto na het focussen";
 "onboarding_cert_desc" = " puede guardar o compartir su foto de autenticación.";
 "onboarding_start" = "Aan de slag";
+"notification_title_timer_done" = "Timer klaar";
+"notification_body_timer_done" = "%d minuten focus voltooid!";

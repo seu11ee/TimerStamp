@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "Crea una foto di autenticazione dopo esserti concentrato";
 "onboarding_cert_desc" = "Una vez que termine de concentrarse";
 "onboarding_start" = "Inizia";
+"notification_title_timer_done" = "Timer Completato";
+"notification_body_timer_done" = "%d minuti di concentrazione completati!";

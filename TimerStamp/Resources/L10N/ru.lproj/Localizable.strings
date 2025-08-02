@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "Создайте фото аутентификации после фокусировки";
 "onboarding_cert_desc" = "Nachdem Sie sich konzentriert haben";
 "onboarding_start" = "Начать";
+"notification_title_timer_done" = "Таймер завершен";
+"notification_body_timer_done" = "%d минут фокусировки завершено!";

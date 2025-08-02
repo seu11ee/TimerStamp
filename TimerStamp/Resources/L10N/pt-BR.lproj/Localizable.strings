@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "Crie uma foto de autenticação após focar";
 "onboarding_cert_desc" = " können Sie Ihr Authentifizierungsfoto speichern oder teilen.";
 "onboarding_start" = "Começar";
+"notification_title_timer_done" = "Temporizador Concluído";
+"notification_body_timer_done" = "%d minutos de foco concluídos!";

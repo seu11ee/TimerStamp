@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "Crea una foto de autenticación después de concentrarte";
 "onboarding_cert_desc" = " vous pouvez enregistrer ou partager votre photo d'authentification.";
 "onboarding_start" = "Empezar";
+"notification_title_timer_done" = "Temporizador finalizado";
+"notification_body_timer_done" = "¡%d minutos de enfoque completados!";

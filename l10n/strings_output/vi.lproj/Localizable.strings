@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "Tạo ảnh xác thực sau khi tập trung";
 "onboarding_cert_desc" = " puoi salvare o condividere la tua foto di autenticazione.";
 "onboarding_start" = "Bắt đầu";
+"notification_title_timer_done" = "Hẹn giờ hoàn tất";
+"notification_body_timer_done" = "Hoàn thành %d phút tập trung!";

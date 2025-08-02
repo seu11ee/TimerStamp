@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "สร้างภาพยืนยันหลังจากโฟกัส";
 "onboarding_cert_desc" = "Nadat u klaar bent met focussen";
 "onboarding_start" = "เริ่มต้น";
+"notification_title_timer_done" = "จับเวลาเสร็จสิ้น";
+"notification_body_timer_done" = "ครบ %d นาที!";

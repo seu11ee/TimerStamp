@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "Create an authentication photo after focusing";
 "onboarding_cert_desc" = "After you finish focusing";
 "onboarding_start" = "Get Started";
+"notification_title_timer_done" = "Timer Done";
+"notification_body_timer_done" = "%d minutes of focus completed!";

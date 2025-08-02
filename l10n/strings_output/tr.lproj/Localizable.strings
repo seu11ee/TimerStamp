@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "Odaklandıktan sonra doğrulama fotoğrafı oluştur";
 "onboarding_cert_desc" = " você pode salvar ou compartilhar sua foto de autenticação.";
 "onboarding_start" = "Başla";
+"notification_title_timer_done" = "Zamanlayıcı Tamamlandı";
+"notification_body_timer_done" = "%d dakikalık odaklanma tamamlandı!";

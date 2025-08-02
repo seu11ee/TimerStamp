@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "Créez une photo d'authentification après vous être concentré";
 "onboarding_cert_desc" = "專注完成後，您可以儲存或分享認證照片。";
 "onboarding_start" = "Commencer";
+"notification_title_timer_done" = "Minuteur terminé";
+"notification_body_timer_done" = "%d minutes de concentration sont terminées !";

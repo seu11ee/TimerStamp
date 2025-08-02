@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "إنشاء صورة تحقق بعد التركيز";
 "onboarding_cert_desc" = "Dopo aver finito di concentrarti";
 "onboarding_start" = "ابدأ";
+"notification_title_timer_done" = "انتهى المؤقت";
+"notification_body_timer_done" = "اكتمل %d دقيقة من التركيز!";

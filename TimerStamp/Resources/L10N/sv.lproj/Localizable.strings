@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "Skapa ett autentiseringsfoto efter fokus";
 "onboarding_cert_desc" = "После завершения фокусировки вы можете сохранить или поделиться своей фотографией аутентификации.";
 "onboarding_start" = "Kom igång";
+"notification_title_timer_done" = "Timer klar";
+"notification_body_timer_done" = "%d minuters fokus avklarat!";

@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "Buat gambar pengesahan selepas fokus";
 "onboarding_cert_desc" = "När du har fokuserat klart kan du spara eller dela din autentiseringsbild.";
 "onboarding_start" = "Mulakan";
+"notification_title_timer_done" = "Pemasa Selesai";
+"notification_body_timer_done" = "%d minit fokus selesai!";

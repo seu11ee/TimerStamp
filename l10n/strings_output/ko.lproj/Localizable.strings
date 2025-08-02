@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "집중한 후 인증 사진 만들기";
 "onboarding_cert_desc" = "집중을 마친 후 인증 사진을 저장하거나 공유할 수 있어요.";
 "onboarding_start" = "시작하기";
+"notification_title_timer_done" = "타이머 완료";
+"notification_body_timer_done" = "%d분 집중이 끝났어요!";

@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "專注後建立認證照片";
 "onboarding_cert_desc" = "专注完成后，您可以保存或分享认证照片。";
 "onboarding_start" = "開始";
+"notification_title_timer_done" = "計時器完成";
+"notification_body_timer_done" = "%d分鐘專注已結束！";

@@ -23,3 +23,5 @@
 "onboarding_cert_title" = "专注后创建认证照片";
 "onboarding_cert_desc" = "集中が終了したら、認証写真を保存または共有できます。";
 "onboarding_start" = "开始";
+"notification_title_timer_done" = "计时器完成";
+"notification_body_timer_done" = "%d分钟专注已结束！";
