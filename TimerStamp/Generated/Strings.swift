@@ -30,6 +30,12 @@ public enum L10n {
   public static func focusComplete(_ p1: Int) -> String {
     return L10n.tr("Localizable", "focus_complete", p1, fallback: "%d분 집중 완료!")
   }
+  /// %d분 집중이 끝났어요!
+  public static func notificationBodyTimerDone(_ p1: Int) -> String {
+    return L10n.tr("Localizable", "notification_body_timer_done", p1, fallback: "%d분 집중이 끝났어요!")
+  }
+  /// 타이머 완료
+  public static let notificationTitleTimerDone = L10n.tr("Localizable", "notification_title_timer_done", fallback: "타이머 완료")
   /// 확인
   public static let ok = L10n.tr("Localizable", "ok", fallback: "확인")
   /// 집중을 마친 후 인증 사진을 저장하거나 공유할 수 있어요.

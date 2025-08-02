@@ -17,14 +17,14 @@ struct TimerContentView: View {
 
             CircularTimerView(viewModel: timerViewModel, width: 350, height: 350)
 
-            if timerViewModel.state == .idle || timerViewModel.state == .running {
-                Text("분침을 돌려 시간을 설정하세요")
+            if timerViewModel.state != .ended {
+                Text("\(L10n.timerRotateInstruction)")
                     .font(.body)
                     .fontWeight(.light)
                     .foregroundColor(timerViewModel.state == .idle ? .mainText : .clear)
             }
             else if timerViewModel.state == .ended {
-                Text("👏 \(timerViewModel.durationMinutes)분 집중 완료!")
+                Text("👏 \(L10n.focusComplete(timerViewModel.durationMinutes))")
                     .font(.body)
                     .fontWeight(.light)
                     .foregroundColor(.mainText)
@@ -42,7 +42,7 @@ struct TimerContentView: View {
                     HStack {
                         Image(systemName: "camera")
                             .font(.body)
-                        Text("인증 사진 만들기")
+                        Text("\(L10n.authPhoto)")
                             .font(.body)
                     }
                     .foregroundColor(.mainButtonText)

@@ -206,8 +206,8 @@ final class TimerViewModel: ObservableObject {
         guard let end = endDate else { return }
         
         let content = UNMutableNotificationContent()
-        content.title = "타이머 완료 🎉"
-        content.body = "\(durationMinutes)분 집중이 끝났어요!"
+        content.title = "\(L10n.notificationTitleTimerDone) 🎉"
+        content.body = "\(L10n.notificationBodyTimerDone(durationMinutes))"
         content.sound = .defaultRingtone
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: end.timeIntervalSinceNow, repeats: false)
