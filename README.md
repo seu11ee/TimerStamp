@@ -8,7 +8,7 @@
 
 <img width="200" alt="screenshot-cert" src="https://github.com/user-attachments/assets/95b3911f-f5c8-454a-90dc-ea4dce737831" />
 
-## 🎯 학습 목표
+## 학습 목표
 
 - **SwiftUI 심화**: Custom Shape, View, Animation을 활용한 복합 UI 구현
 - **Modern Swift**: async/await, @Observable 매크로 활용
@@ -17,14 +17,14 @@
 - **다국어 지원**: 20개 언어 현지화 (Localization)
 - **테스트 주도 개발**: Unit Test, UI Test 작성
 
-## 📱 주요 기능
+## 주요 기능
 
 - **커스텀 타이머**: 드래그 제스처로 시간 설정, 햅틱 피드백 제공
 - **집중 인증**: 타이머 완료 후 인증 사진 촬영 및 공유
 - **Live Activity**: Dynamic Island와 Lock Screen에서 실시간 타이머 확인
 - **다크모드**: 자동/수동 테마 전환 지원
 
-## 🏗️ 아키텍처
+## 아키텍처
 
 ```
 TimerStamp/
@@ -41,7 +41,7 @@ TimerStamp/
 └── Tests/            # Unit Tests & UI Tests
 ```
 
-## 🛠️ 기술 스택
+## 기술 스택
 
 - **UI Framework**: SwiftUI, Custom Shapes & Views
 - **State Management**: @Observable macro, MVVM pattern
@@ -51,7 +51,7 @@ TimerStamp/
 - **Localization**: 20개 언어 지원 (SwiftGen 활용)
 - **Build Tools**: Xcode Schemes, SwiftGen, Custom Scripts
 
-## 🎨 핵심 구현 포인트
+## 핵심 구현 포인트
 
 ### 1. Interactive Timer UI
 - `PieSlice`, `RadiusStick` 등 Custom Shape 구현
