@@ -106,20 +106,36 @@ struct TimerProgressPie: View {
 }
 
 // MARK: - Timer Dial Wrapper
+/// MinuteDial을 타이머 맥락에서 사용하기 위한 래퍼.
+/// 분(durationMinutes), 남은 시간(remainingTime) ↔ 각도 변환을 담당합니다.
 struct TimerDial: View {
     @Binding var durationMinutes: Int
     @Binding var remainingTime: TimeInterval
     let radius: CGFloat
     let isRunning: Bool
-    
+
+    @State private var angle: Double = 0
+
     var body: some View {
         MinuteDial(
-            durationMinutes: $durationMinutes,
-            remainingTime: $remainingTime,
+            angle: $angle,
+            snapStep: 6.0,
             radius: radius,
             isRunning: isRunning
         )
-        .animation(.easeInOut(duration: 0.3), value: isRunning) // running 상태 변화 시 애니메이션 추가
+        .animation(.easeInOut(duration: 0.3), value: isRunning)
+        .onAppear {
+            angle = AngleConverter.minutesToDegrees(durationMinutes)
+        }
+        .onChange(of: angle) { _, newAngle in
+            let minutes = (Int(newAngle / 6.0) + 60) % 60
+            guard minutes != durationMinutes else { return }
+            durationMinutes = minutes
+        }
+        .onChange(of: remainingTime) { _, newValue in
+            guard isRunning else { return }
+            angle = AngleConverter.secondsToDegrees(newValue)
+        }
     }
 }
 
