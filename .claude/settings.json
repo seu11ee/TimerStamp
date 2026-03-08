@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bundle exec fastlane*)",
+      "Bash(bundle install*)",
+      "Bash(git status*)",
+      "Bash(git branch*)",
+      "Bash(git diff --stat*)"
+    ]
+  }
+}

@@ -33,7 +33,7 @@ struct LiveActivityView: View {
             Spacer()
             // 남은 시간
             var remainingText: Text {
-                if contentState.isPaused {
+                if contentState.isPaused || contentState.remainingTime <= 0 {
                     return Text(timeString(from: contentState.remainingTime))
                 }
                 return Text(Date(timeIntervalSinceNow: contentState.remainingTime), style: .timer)
