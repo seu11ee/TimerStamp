@@ -90,14 +90,14 @@ struct MinuteDial: View {
         }
         .onChange(of: remainingTime) { _, newValue in
             if !isDragging {
-                rotation = remainingTime / 10.0
+                rotation = AngleConverter.secondsToDegrees(newValue)
             }
         }
         
         
     }
     func resetRotation() {
-        rotation = Double(durationMinutes) * 6
+        rotation = AngleConverter.minutesToDegrees(durationMinutes)
     }
     
 }
