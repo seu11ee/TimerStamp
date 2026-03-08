@@ -10,17 +10,7 @@ import UserNotifications
 import Combine
 
 final class TimerViewModel: ObservableObject {
-    enum TimerMode {
-        case normal
-        case pomodoro
-    }
 
-    enum PomodoroPhase {
-        case focus
-        case shortBreak
-        case longBreak
-    }
- 
     // MARK: - Public Properties
     @Published var state: TimerState = .idle
     @Published var durationMinutes: Int = 25 {
@@ -32,26 +22,17 @@ final class TimerViewModel: ObservableObject {
     }
     @Published var remainingTime: TimeInterval = 25 * 60
     @Published var endDate: Date?
+
     var progress: Double {
         let total = Double(durationMinutes * 60)
         return total > 0 ? Double(remainingTime) / total : 1.0
     }
 
-    @Published var mode: TimerMode = .normal
-    @Published var pomodoroPhase: PomodoroPhase = .focus
-    @Published var pomodoroRound: Int = 0
-
-    var focusMinutes: Int = 25
-    var breakMinutes: Int = 5
-    var longBreakMinutes: Int = 15
-    var maxRounds: Int = 4
-
     // MARK: - Private Properties
     private var timer: Timer?
 
     // MARK: - Init
-    init(mode: TimerMode = .normal, durationMinutes: Int = 25) {
-        self.mode = mode
+    init(durationMinutes: Int = 25) {
         self.durationMinutes = durationMinutes
         self.remainingTime = TimeInterval(durationMinutes * 60)
         requestNotificationPermission()
@@ -110,7 +91,7 @@ final class TimerViewModel: ObservableObject {
         LiveActivityManager.update(endDate: endDate, isPaused: false)
     }
 
-    /// 뷰의 onAppear에서 호출. 백그라운드에서 복귀하거나 앱 재실행 시 타이머 상태를 복원하고
+    /// 뷰의 onAppear에서 호출. 백그라운드 복귀 또는 앱 재실행 시 타이머 상태를 복원하고
     /// 이미 종료된 경우 알림/LiveActivity를 정리합니다.
     func restoreOnAppear() {
         guard let end = endDate else {
@@ -155,32 +136,6 @@ final class TimerViewModel: ObservableObject {
         state = .ended
         LiveActivityManager.end()
         cancelNotification()
-        if mode == .pomodoro {
-            advanceToNextPomodoroPhase()
-        }
-    }
-
-    private func advanceToNextPomodoroPhase() {
-        switch pomodoroPhase {
-        case .focus:
-            pomodoroRound += 1
-            if pomodoroRound < maxRounds {
-                pomodoroPhase = .shortBreak
-                durationMinutes = breakMinutes
-            } else {
-                pomodoroPhase = .longBreak
-                durationMinutes = longBreakMinutes
-            }
-        case .shortBreak:
-            pomodoroPhase = .focus
-            durationMinutes = focusMinutes
-        case .longBreak:
-            pomodoroPhase = .focus
-            pomodoroRound = 0
-            durationMinutes = focusMinutes
-        }
-        reset()
-        start()
     }
 
     // MARK: - Notifications
