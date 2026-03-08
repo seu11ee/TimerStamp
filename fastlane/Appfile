@@ -1,0 +1,4 @@
+app_identifier("com.yeseullee.timerstamp")
+apple_id(ENV["APPLE_ID"])
+team_id("4YXV56BSN6")
+itc_team_id("4YXV56BSN6")

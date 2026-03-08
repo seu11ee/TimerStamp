@@ -50,8 +50,7 @@ struct CircularTimerView: View {
     }
     
     private func setupTimer() {
-        viewModel.resetStatus()
-        viewModel.restoreTimerIfNeeded()
+        viewModel.restoreOnAppear()
     }
 }
 
@@ -155,8 +154,7 @@ struct TimerViewSimple: View {
     }
     
     private func setupTimer() {
-        viewModel.resetStatus()
-        viewModel.restoreTimerIfNeeded()
+        viewModel.restoreOnAppear()
     }
 }
 

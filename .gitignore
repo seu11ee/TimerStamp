@@ -18,3 +18,21 @@ Package.pins
 # User-specific
 *.DS_Store
 *.orig
+
+# Fastlane
+fastlane/.env
+fastlane/.env.*
+fastlane/report.xml
+fastlane/test_output/
+fastlane/logs/
+fastlane/build/
+
+# Certificates (never commit)
+*.p8
+*.p12
+*.cer
+*.mobileprovision
+
+# Ruby / Bundler
+vendor/bundle
+.bundle/

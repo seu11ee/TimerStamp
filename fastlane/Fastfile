@@ -1,0 +1,91 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Sync certificates and provisioning profiles"
+  lane :sync_certificates do
+    api_key = app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: ENV["ASC_KEY_CONTENT"],
+      is_key_content_base64: true
+    )
+
+    match(
+      type: "appstore",
+      api_key: api_key
+    )
+  end
+
+  desc "Run tests on simulator"
+  lane :test do
+    run_tests(
+      scheme: "TimerStamp",
+      destination: "platform=iOS Simulator,name=iPhone 17",
+      clean: true,
+      result_bundle: true,
+      output_directory: "fastlane/test_output"
+    )
+  end
+
+  desc "Build and upload to TestFlight"
+  lane :beta do
+    setup_ci if ENV["CI"]
+
+    api_key = app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: ENV["ASC_KEY_CONTENT"],
+      is_key_content_base64: true
+    )
+
+    match(
+      type: "appstore",
+      api_key: api_key
+    )
+
+    gym(
+      scheme: "TimerStamp_Release",
+      export_method: "app-store",
+      clean: true,
+      output_directory: "fastlane/build",
+      output_name: "TimerStamp.ipa"
+    )
+
+    upload_to_testflight(
+      api_key: api_key,
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  desc "Build and submit to App Store"
+  lane :release do
+    setup_ci if ENV["CI"]
+
+    api_key = app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: ENV["ASC_KEY_CONTENT"],
+      is_key_content_base64: true
+    )
+
+    match(
+      type: "appstore",
+      api_key: api_key
+    )
+
+    gym(
+      scheme: "TimerStamp_Release",
+      export_method: "app-store",
+      clean: true,
+      output_directory: "fastlane/build",
+      output_name: "TimerStamp.ipa"
+    )
+
+    upload_to_app_store(
+      api_key: api_key,
+      submit_for_review: false,
+      automatic_release: false,
+      force: true
+    )
+  end
+end
