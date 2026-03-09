@@ -8,7 +8,7 @@
 import SwiftUI
 import UIKit
 
-/// 회전 가능한 원형 다이얼 컴포넌트.
+/// 회전 가능한 시계 분침 컴포넌트.
 /// 각도(0~360°)만 알고, 시간/분 등 도메인 개념과 무관하게 동작합니다.
 struct MinuteDial: View {
 
