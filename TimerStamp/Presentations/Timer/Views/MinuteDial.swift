@@ -8,11 +8,13 @@
 import SwiftUI
 import UIKit
 
-/// 회전 가능한 시계 분침 컴포넌트.
+/// 회전 가능한 원형 다이얼 컴포넌트.
 /// 각도(0~360°)만 알고, 시간/분 등 도메인 개념과 무관하게 동작합니다.
 struct MinuteDial: View {
 
-    /// 현재 다이얼 각도 (0~360°). 외부에서 읽기/쓰기 가능.
+    /// 현재 다이얼 각도 (0~360°).
+    /// - 외부 → MinuteDial: 타이머 진행 등 외부 값 반영
+    /// - MinuteDial → 외부: 드래그 중 실시간으로 스냅된 각도 방출
     @Binding var angle: Double
 
     /// 드래그 스냅 단위(도). 기본값 6° = 타이머 1분 단위.
@@ -23,32 +25,47 @@ struct MinuteDial: View {
 
     // MARK: - Internal State
 
-    private struct DragState {
-        var delta: Double = 0
-        var startAngle: Double? = nil
-        var lastHapticAngle: Double? = nil
+    /// 프레임 간 incremental delta로 wrap-around 처리 + 클램핑을 위한 드래그 임시 상태.
+    private struct DragState: Equatable {
         var isActive: Bool = false
+        var startCommittedAngle: Double = 0
+        var previousPointer: Double = 0
+        var cumulativeDelta: Double = 0
+        var visualAngle: Double = 0   // 화면 회전에 사용 (연속적)
+        var snappedAngle: Double = 0  // 외부로 방출하는 스냅 각도
+        var lastHapticAngle: Double? = nil
     }
 
     @GestureState private var dragState = DragState()
 
-    /// 제스처 계산의 기준이 되는 안정적인 각도.
-    /// angle 바인딩이 외부에서 변경될 때(타이머 진행 등) 동기화됩니다.
+    /// 제스처가 없을 때 회전 기준각.
     @State private var committedAngle: Double = 0
+
+    /// 드래그 종료 시점에 @GestureState가 리셋되기 전 마지막 스냅 각도를 보존.
+    @State private var lastSnapped: Double = 0
 
     // MARK: - Body
 
     var body: some View {
         RadiusStickView(radius: radius)
             .frame(width: radius * 2, height: radius * 2)
-            .rotationEffect(.degrees(committedAngle + dragState.delta))
+            .rotationEffect(.degrees(dragState.isActive ? dragState.visualAngle : committedAngle))
             .gesture(isRunning ? nil : dragGesture)
             .onAppear {
                 committedAngle = angle
+                lastSnapped = angle
             }
             .onChange(of: angle) { _, newValue in
+                // 드래그 중엔 외부 변경을 무시해 이중 회전 방지
                 guard !dragState.isActive else { return }
                 committedAngle = newValue
+                lastSnapped = newValue
+            }
+            .onChange(of: dragState.snappedAngle) { _, newValue in
+                // 드래그 중 실시간으로 스냅 각도를 외부에 방출
+                guard dragState.isActive else { return }
+                lastSnapped = newValue
+                angle = newValue
             }
     }
 
@@ -57,25 +74,35 @@ struct MinuteDial: View {
     private var dragGesture: some Gesture {
         DragGesture()
             .updating($dragState) { value, state, _ in
-                if state.startAngle == nil {
-                    state.startAngle = pointToAngle(value.startLocation)
+                // 첫 프레임: 기준값 캡처
+                if !state.isActive {
+                    state.startCommittedAngle = committedAngle
+                    state.previousPointer = pointToAngle(value.startLocation)
+                    state.cumulativeDelta = 0
+                    state.isActive = true
                 }
-                guard let start = state.startAngle else { return }
 
-                let delta = pointToAngle(value.location) - start
-                state.delta = delta
-                state.isActive = true
+                // 프레임 간 최단 경로 delta로 0/360° wrap-around 처리
+                let currentPointer = pointToAngle(value.location)
+                let step = shortestDelta(state.previousPointer, currentPointer)
+                state.previousPointer = currentPointer
 
-                let snapped = snapToStep(committedAngle + delta)
-                if snapped != state.lastHapticAngle {
-                    state.lastHapticAngle = snapped
+                // 클램핑: cumulativeDelta를 조정해 경계 초과 방지
+                let raw = state.startCommittedAngle + state.cumulativeDelta + step
+                let clamped = max(0, min(360, raw))
+                state.cumulativeDelta = clamped - state.startCommittedAngle
+
+                state.visualAngle = clamped
+                state.snappedAngle = snapToStep(clamped)
+
+                if state.snappedAngle != state.lastHapticAngle {
+                    state.lastHapticAngle = state.snappedAngle
                     UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                 }
             }
-            .onEnded { value in
-                let start = pointToAngle(value.startLocation)
-                let end = pointToAngle(value.location)
-                committedAngle = snapToStep(committedAngle + (end - start))
+            .onEnded { _ in
+                // @GestureState는 onEnded 시점에 이미 리셋되므로 lastSnapped 사용
+                committedAngle = lastSnapped
                 angle = committedAngle
             }
     }
@@ -92,7 +119,16 @@ struct MinuteDial: View {
 
     /// 각도를 snapStep 배수로 내림합니다.
     func snapToStep(_ rotation: Double) -> Double {
-        return floor(rotation / snapStep) * snapStep
+        floor(rotation / snapStep) * snapStep
+    }
+
+    /// 두 각도 사이의 최단 경로 delta를 [-180, 180] 범위로 반환합니다.
+    /// 프레임 간 소량 이동에서 0/360° 경계 wrap-around를 올바르게 처리합니다.
+    private func shortestDelta(_ from: Double, _ to: Double) -> Double {
+        var delta = to - from
+        if delta > 180 { delta -= 360 }
+        if delta < -180 { delta += 360 }
+        return delta
     }
 }
 
@@ -112,15 +148,10 @@ struct MinuteDial: View {
         var body: some View {
             VStack(spacing: 32) {
                 ZStack {
-                    TimerProgressPie(
-                        progress: angle / 360,
-                        minutes: displayMinutes,
-                        radius: radius
-                    )
                     MinuteDial(
                         angle: $angle,
                         snapStep: 6.0,
-                        radius: radius * 0.83,
+                        radius: radius * TimerConstants.dialRadiusRatio,
                         isRunning: isRunning
                     )
                 }

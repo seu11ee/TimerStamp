@@ -15,7 +15,7 @@ enum TimerState {
 }
 
 // MARK: - Constants
-private struct TimerConstants {
+struct TimerConstants {
     static let circlePadding: CGFloat = 60
     static let dialRadiusRatio: CGFloat = 0.83
     static let componentSpacing: CGFloat = 60
@@ -128,7 +128,7 @@ struct TimerDial: View {
             angle = AngleConverter.minutesToDegrees(durationMinutes)
         }
         .onChange(of: angle) { _, newAngle in
-            let minutes = (Int(newAngle / 6.0) + 60) % 60
+            let minutes = Int(newAngle / 6.0)  // 0° = 0분, 360° = 60분
             guard minutes != durationMinutes else { return }
             durationMinutes = minutes
         }
