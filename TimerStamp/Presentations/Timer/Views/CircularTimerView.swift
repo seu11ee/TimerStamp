@@ -15,7 +15,7 @@ enum TimerState {
 }
 
 // MARK: - Constants
-private struct TimerConstants {
+struct TimerConstants {
     static let circlePadding: CGFloat = 60
     static let dialRadiusRatio: CGFloat = 0.83
     static let componentSpacing: CGFloat = 60
@@ -106,105 +106,41 @@ struct TimerProgressPie: View {
 }
 
 // MARK: - Timer Dial Wrapper
+/// MinuteDial을 타이머 맥락에서 사용하기 위한 래퍼.
+/// 분(durationMinutes), 남은 시간(remainingTime) ↔ 각도 변환을 담당합니다.
 struct TimerDial: View {
     @Binding var durationMinutes: Int
     @Binding var remainingTime: TimeInterval
     let radius: CGFloat
     let isRunning: Bool
-    
+
+    @State private var angle: Double = 0
+
     var body: some View {
         MinuteDial(
-            durationMinutes: $durationMinutes,
-            remainingTime: $remainingTime,
+            angle: $angle,
+            snapStep: 6.0,
             radius: radius,
             isRunning: isRunning
         )
-        .animation(.easeInOut(duration: 0.3), value: isRunning) // running 상태 변화 시 애니메이션 추가
-    }
-}
-
-// MARK: - Alternative Simpler Version
-struct TimerViewSimple: View {
-    @ObservedObject var viewModel: TimerViewModel
-    let size: CGFloat
-    
-    private var radius: CGFloat {
-        size / 2 - 60
-    }
-    
-    var body: some View {
-        ZStack {
-            // 배경 요소들
-            TimerBackground(size: size)
-            
-            // 진행 상태 표시
-            TimerProgress(
-                progress: viewModel.progress,
-                minutes: viewModel.durationMinutes,
-                radius: radius
-            )
-            
-            // 다이얼 컨트롤
-            TimerControl(
-                viewModel: viewModel,
-                radius: radius * 0.83
-            )
+        .animation(.easeInOut(duration: 0.3), value: isRunning)
+        .onAppear {
+            angle = AngleConverter.minutesToDegrees(durationMinutes)
         }
-        .onAppear(perform: setupTimer)
-    }
-    
-    private func setupTimer() {
-        viewModel.restoreOnAppear()
-    }
-}
-
-// MARK: - Supporting Components for Simple Version
-struct TimerBackground: View {
-    let size: CGFloat
-    
-    var body: some View {
-        Group {
-            MinuteLabels(width: size, height: size)
-            MinuteTicks(radius: size / 2 - 60)
+        .onChange(of: angle) { _, newAngle in
+            let minutes = Int(newAngle / 6.0)  // 0° = 0분, 360° = 60분
+            guard minutes != durationMinutes else { return }
+            durationMinutes = minutes
+        }
+        .onChange(of: remainingTime) { _, newValue in
+            guard isRunning else { return }
+            angle = AngleConverter.secondsToDegrees(newValue)
         }
     }
 }
 
-struct TimerProgress: View {
-    let progress: Double
-    let minutes: Int
-    let radius: CGFloat
-    
-    var body: some View {
-        PieSlice(progress: progress, minutes: minutes)
-            .fill(Color.timerMain)
-            .frame(width: radius * 2, height: radius * 2)
-    }
-}
+// MARK: - Preview
 
-struct TimerControl: View {
-    @ObservedObject var viewModel: TimerViewModel
-    let radius: CGFloat
-    
-    var body: some View {
-        MinuteDial(
-            durationMinutes: $viewModel.durationMinutes,
-            remainingTime: $viewModel.remainingTime,
-            radius: radius,
-            isRunning: viewModel.state == .running
-        )
-    }
-}
-
-// MARK: - Usage Examples
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        // 기존 방식과 동일한 인터페이스
-        CircularTimerView(viewModel: TimerViewModel(), width: 350, height: 350)
-            .previewDisplayName("Refactored Timer")
-        
-        // 더 간단한 버전
-        TimerViewSimple(viewModel: TimerViewModel(), size: 350)
-            .previewDisplayName("Simple Timer")
-    }
+#Preview {
+    CircularTimerView(viewModel: TimerViewModel(), width: 350, height: 350)
 }

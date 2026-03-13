@@ -78,7 +78,6 @@
 - `state` → `.ended`
 - LiveActivity 종료
 - 로컬 알림 취소
-- (Pomodoro 모드일 경우) 다음 페이즈 자동 진행
 
 ### 1-8. progress (계산 프로퍼티)
 
@@ -110,39 +109,14 @@ progress = remainingTime / (durationMinutes * 60)
 
 ---
 
-## 2. Pomodoro 모드
+## 2. LiveActivityManager
 
-### 2-1. 페이즈 (PomodoroPhase)
-
-| 페이즈 | 기본 시간 |
-|--------|-----------|
-| `focus` | 25분 |
-| `shortBreak` | 5분 |
-| `longBreak` | 15분 |
-
-### 2-2. 라운드 진행 규칙
-
-- `focus` 완료 → `pomodoroRound += 1`
-  - round < maxRounds(4): `shortBreak`으로 전환
-  - round >= maxRounds: `longBreak`으로 전환
-- `shortBreak` 완료 → `focus`로 전환
-- `longBreak` 완료 → `focus`로 전환, `pomodoroRound = 0` (초기화)
-
-### 2-3. 페이즈 전환 동작
-
-- `durationMinutes`가 해당 페이즈 시간으로 변경됨
-- `reset()` → `start()` 자동 호출
-
----
-
-## 3. LiveActivityManager
-
-### 3-1. start(startDate:endDate:totalDuration:)
+### 2-1. start(startDate:endDate:totalDuration:)
 
 - 기기에서 LiveActivity가 비활성화된 경우 → 무시
 - `TimerAttributes` + `ContentState(endDate:)` 로 Activity 생성
 
-### 3-2. update(endDate:isPaused:pausedRemainingTime:)
+### 2-2. update(endDate:isPaused:pausedRemainingTime:)
 
 | 상황 | endDate | isPaused | pausedRemainingTime |
 |------|---------|----------|----------------------|
@@ -150,15 +124,15 @@ progress = remainingTime / (durationMinutes * 60)
 | 일시정지 | nil | true | 현재 남은 초 |
 | 재개 | 새 종료 예정 시각 | false | 0 |
 
-### 3-3. end()
+### 2-3. end()
 
 - 모든 활성 Activity를 즉시(`.immediate`) 종료
 
 ---
 
-## 4. TimerAttributes.ContentState
+## 3. TimerAttributes.ContentState
 
-### 4-1. remainingTime (계산 프로퍼티)
+### 3-1. remainingTime (계산 프로퍼티)
 
 ```
 endDate가 있으면: max(0, endDate.timeIntervalSinceNow)
@@ -170,39 +144,60 @@ endDate가 없으면: pausedRemainingTime
 
 ---
 
-## 5. 드래그 다이얼 (MinuteDial)
+## 4. 드래그 다이얼 (MinuteDial)
 
-### 5-1. 각도-분 변환
+### 4-1. 각도-분 변환 (AngleConverter)
 
 ```
 1분 = 6도
-분 = 각도 / 6
+분 → 각도: minutes * 6.0
+초 → 각도: seconds / 10.0
+각도 → 분:  Int(angle / 6.0)   // 0° = 0분, 360° = 60분
 ```
 
-- 설정 가능 범위: 1 ~ 59분
-- 0분(360도) 및 음수 각도 설정 불가
+- 설정 가능 범위: 0 ~ 60분 (0° ~ 360°)
+- 음수 각도, 360° 초과 설정 불가 (클램핑)
 - `state == .running`일 때 드래그 제스처 비활성화
 
-### 5-2. 드래그 동작
+### 4-2. MinuteDial 책임
 
-- 드래그 중: `durationMinutes` 실시간 업데이트
-- 드래그 중: 분 경계 통과 시 햅틱 피드백 (`.soft`)
-- 드래그 종료: 각도를 6도 단위로 snap
-- 타이머 실행 중: 제스처 nil → 입력 무시
+MinuteDial은 **각도(0~360°)만** 알며, 시간/분 개념과 무관합니다.
 
-### 5-3. remainingTime 연동
+| 방향 | 동작 |
+|------|------|
+| 외부 → MinuteDial | `angle` 바인딩으로 다이얼 위치 갱신 (드래그 중 무시) |
+| MinuteDial → 외부 | 드래그 중 실시간으로 스냅 각도를 `angle` 바인딩에 방출 |
+
+### 4-3. 드래그 동작
+
+- **wrap-around 처리**: 프레임 간 최단 경로 delta(`shortestDelta`) 사용 → 0°/360° 경계 정상 동작
+- **클램핑**: `cumulativeDelta` 조정으로 0° 이하·360° 초과 진입 차단, 반전 시 즉시 반응
+- **스냅**: 드래그 종료 시 `snapStep`(기본 6°) 단위로 내림 정렬
+- **햅틱**: 스냅 각도 변경 시 `.soft` 햅틱 피드백
+- **루프 방지**: 드래그 중 외부에서 `angle` 변경 시 `dragState.isActive` guard로 `committedAngle` 업데이트 차단
+
+### 4-4. TimerDial 래퍼 (도메인 브릿지)
+
+MinuteDial을 타이머 맥락에서 사용하기 위한 래퍼. 분/초 ↔ 각도 변환 담당.
+
+- `onAppear`: `durationMinutes` → 각도로 변환해 초기값 설정
+- `angle` 변경 → `durationMinutes` 갱신 (실시간, 드래그 중 포함)
+- `remainingTime` 변경 → 각도 갱신 (`isRunning`일 때만)
+
+### 4-5. remainingTime 연동
+
+```
+rotation = remainingTime / 10.0   // AngleConverter.secondsToDegrees
+```
 
 - 타이머 진행 중 `remainingTime` 변경 시 다이얼 각도 자동 갱신
-  ```
-  rotation = remainingTime / 10.0
-  ```
-- 드래그 중에는 갱신 무시 (`isDragging == true`)
+- 드래그 중에는 갱신 무시 (`dragState.isActive == true`)
 
 ---
 
-## 6. PieSlice (원형 진행 표시)
+## 5. PieSlice (원형 진행 표시)
 
-### 6-1. 각도 계산
+### 5-1. 각도 계산
 
 ```
 totalDegrees = minutes * 6
@@ -214,31 +209,31 @@ endAngle = -90도 (12시 방향)
 - `progress = 0.0`: 부채꼴 없음 (endAngle == startAngle)
 - 시계 방향으로 채워짐
 
-### 6-2. 애니메이션
+### 5-2. 애니메이션
 
 - `animatableData = progress` → progress 변화 시 부드러운 애니메이션
 
 ---
 
-## 7. 알림 (UNUserNotificationCenter)
+## 6. 알림 (UNUserNotificationCenter)
 
-### 7-1. 권한 요청
+### 6-1. 권한 요청
 
 - 앱 최초 실행 시 `requestAuthorization(options: [.alert, .sound])` 호출
 
-### 7-2. 예약
+### 6-2. 예약
 
 - 식별자: `"timerDone"`
 - 트리거: `endDate.timeIntervalSinceNow` 후 1회 발송
 - 내용: 제목(완료 메시지) + 본문(설정 분 포함) + 기본 알림음
 
-### 7-3. 취소
+### 6-3. 취소
 
 - `reset()`, `pause()`, 타이머 자동 완료 시 `"timerDone"` 식별자로 pending 알림 제거
 
 ---
 
-## 8. UI 상태별 표시
+## 7. UI 상태별 표시
 
 | 상태 | 안내 텍스트 | 타이머 레이블 | 인증사진 버튼 | 플레이 버튼 |
 |------|-------------|--------------|--------------|------------|
@@ -249,7 +244,7 @@ endAngle = -90도 (12시 방향)
 
 ---
 
-## 9. 화면 잠금 방지
+## 8. 화면 잠금 방지
 
 - `TimerScreen` 등장 시: `UIApplication.shared.isIdleTimerDisabled = true`
 - `TimerScreen` 사라질 시: `UIApplication.shared.isIdleTimerDisabled = false`
