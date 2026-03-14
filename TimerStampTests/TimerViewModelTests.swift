@@ -68,19 +68,20 @@ final class TimerViewModelTests: XCTestCase {
 
     // MARK: - State Transition Tests
 
-    func testStart_setsRunningStateAndRemainingTime() {
+    func testStart_setsRunningStateAndEndDate() {
         vm.start()
 
         XCTAssertEqual(vm.state, .running)
-        XCTAssertEqual(vm.remainingTime, 60, accuracy: 1)
+        XCTAssertNotNil(vm.endDate)
+        XCTAssertEqual(vm.endDate!.timeIntervalSinceNow, 60, accuracy: 1)
     }
 
-    func testReset_returnsToIdleAndResetsRemainingTime() {
+    func testReset_returnsToIdleAndClearsEndDate() {
         vm.start()
         vm.reset()
 
         XCTAssertEqual(vm.state, .idle)
-        XCTAssertEqual(vm.remainingTime, 60, accuracy: 1)
+        XCTAssertNil(vm.endDate)
     }
 
     func testPause_setsPausedState() {
@@ -100,7 +101,44 @@ final class TimerViewModelTests: XCTestCase {
         XCTAssertNotNil(vm.endDate)
     }
 
-    func testProgress_returnsOneWhenIdle() {
+    // MARK: - Guard Condition Tests
+
+    func testStart_whileRunning_isIgnored() {
+        vm.start()
+        vm.start()
+
+        XCTAssertEqual(liveActivity.startCallCount, 1)
+    }
+
+    func testPause_whileIdle_isIgnored() {
+        vm.pause()
+
+        XCTAssertEqual(vm.state, .idle)
+        XCTAssertEqual(liveActivity.updateCallCount, 0)
+    }
+
+    func testResume_whileIdle_isIgnored() {
+        vm.resume()
+
+        XCTAssertEqual(vm.state, .idle)
+        XCTAssertEqual(liveActivity.updateCallCount, 0)
+    }
+
+    func testStart_afterEnded_startsRunning() {
+        vm.endDate = Date().addingTimeInterval(-1)
+        vm.restoreOnAppear()  // expired endDate → finish() → state = .ended
+        XCTAssertEqual(vm.state, .ended)
+
+        vm.start()
+
+        XCTAssertEqual(vm.state, .running)
+        XCTAssertEqual(liveActivity.startCallCount, 1)
+    }
+
+    // MARK: - Progress Tests
+
+    func testProgress_isOneWhenDurationIsZero() {
+        let vm = TimerViewModel(durationMinutes: 0, liveActivity: liveActivity, notification: notification)
         XCTAssertEqual(vm.progress, 1.0, accuracy: 0.01)
     }
 
@@ -130,9 +168,11 @@ final class TimerViewModelTests: XCTestCase {
     func testResume_callsLiveActivityUpdateWithResumed() {
         vm.start()
         vm.pause()
+        let countAfterPause = liveActivity.updateCallCount
+
         vm.resume()
 
-        XCTAssertEqual(liveActivity.updateCallCount, 2)
+        XCTAssertEqual(liveActivity.updateCallCount, countAfterPause + 1)
         XCTAssertEqual(liveActivity.lastUpdateIsPaused, false)
     }
 
@@ -165,8 +205,35 @@ final class TimerViewModelTests: XCTestCase {
     func testResume_schedulesNotificationAgain() {
         vm.start()
         vm.pause()
+        let countAfterStart = notification.scheduleCallCount
+
         vm.resume()
 
-        XCTAssertEqual(notification.scheduleCallCount, 2)
+        XCTAssertEqual(notification.scheduleCallCount, countAfterStart + 1)
+    }
+
+    // MARK: - restoreOnAppear Tests
+
+    func testRestoreOnAppear_whenIdleWithNoEndDate_cleansUpServices() {
+        vm.restoreOnAppear()
+
+        XCTAssertEqual(notification.cancelCallCount, 1)
+        XCTAssertEqual(liveActivity.endCallCount, 1)
+    }
+
+    func testRestoreOnAppear_withFutureEndDate_resumesTimer() {
+        vm.endDate = Date().addingTimeInterval(30)
+        vm.restoreOnAppear()
+
+        XCTAssertEqual(vm.state, .running)
+    }
+
+    func testRestoreOnAppear_withExpiredEndDate_finishesTimer() {
+        vm.endDate = Date().addingTimeInterval(-1)
+        vm.restoreOnAppear()
+
+        XCTAssertEqual(vm.state, .ended)
+        XCTAssertEqual(liveActivity.endCallCount, 1)
+        XCTAssertEqual(notification.cancelCallCount, 1)
     }
 }
