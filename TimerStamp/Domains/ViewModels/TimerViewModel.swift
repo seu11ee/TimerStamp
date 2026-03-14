@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UserNotifications
 import Combine
 
 final class TimerViewModel: ObservableObject {
@@ -30,12 +29,20 @@ final class TimerViewModel: ObservableObject {
 
     // MARK: - Private Properties
     private var timer: Timer?
+    private let liveActivity: TimerLiveActivityService
+    private let notification: TimerNotificationService
 
     // MARK: - Init
-    init(durationMinutes: Int = 25) {
+    init(
+        durationMinutes: Int = 25,
+        liveActivity: TimerLiveActivityService = DefaultLiveActivityService(),
+        notification: TimerNotificationService = DefaultNotificationService()
+    ) {
         self.durationMinutes = durationMinutes
         self.remainingTime = TimeInterval(durationMinutes * 60)
-        requestNotificationPermission()
+        self.liveActivity = liveActivity
+        self.notification = notification
+        notification.requestPermission()
     }
 
     // MARK: - Timer Control
@@ -46,9 +53,8 @@ final class TimerViewModel: ObservableObject {
         self.state = .running
 
         startTicking()
-        scheduleNotification()
-
-        LiveActivityManager.start(startDate: Date(), endDate: endDate!, totalDuration: TimeInterval(remainingTime))
+        notification.schedule(endDate: endDate!, durationMinutes: durationMinutes)
+        liveActivity.start(startDate: Date(), endDate: endDate!, totalDuration: TimeInterval(remainingTime))
     }
 
     func reset() {
@@ -58,8 +64,8 @@ final class TimerViewModel: ObservableObject {
         self.remainingTime = TimeInterval(durationMinutes * 60)
         state = .idle
 
-        LiveActivityManager.end()
-        cancelNotification()
+        liveActivity.end()
+        notification.cancel()
     }
 
     func pause() {
@@ -74,9 +80,8 @@ final class TimerViewModel: ObservableObject {
 
         self.state = .paused
 
-        cancelNotification()
-
-        LiveActivityManager.update(endDate: nil, isPaused: true, pausedRemainingTime: remainingTime)
+        notification.cancel()
+        liveActivity.update(endDate: nil, isPaused: true, pausedRemainingTime: remainingTime)
     }
 
     func resume() {
@@ -86,9 +91,8 @@ final class TimerViewModel: ObservableObject {
         self.state = .running
 
         startTicking()
-        scheduleNotification()
-
-        LiveActivityManager.update(endDate: endDate, isPaused: false)
+        notification.schedule(endDate: endDate!, durationMinutes: durationMinutes)
+        liveActivity.update(endDate: endDate, isPaused: false, pausedRemainingTime: 0)
     }
 
     /// 뷰의 onAppear에서 호출. 백그라운드 복귀 또는 앱 재실행 시 타이머 상태를 복원하고
@@ -96,8 +100,8 @@ final class TimerViewModel: ObservableObject {
     func restoreOnAppear() {
         guard let end = endDate else {
             if state == .idle || state == .ended {
-                cancelNotification()
-                LiveActivityManager.end()
+                notification.cancel()
+                liveActivity.end()
             }
             remainingTime = TimeInterval(durationMinutes * 60)
             return
@@ -134,31 +138,7 @@ final class TimerViewModel: ObservableObject {
         timer?.invalidate()
         timer = nil
         state = .ended
-        LiveActivityManager.end()
-        cancelNotification()
-    }
-
-    // MARK: - Notifications
-    private func requestNotificationPermission() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
-    }
-
-    private func scheduleNotification() {
-        cancelNotification()
-        guard let end = endDate else { return }
-
-        let content = UNMutableNotificationContent()
-        content.title = "\(L10n.notificationTitleTimerDone) 🎉"
-        content.body = "\(L10n.notificationBodyTimerDone(durationMinutes))"
-        content.sound = .defaultRingtone
-
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: end.timeIntervalSinceNow, repeats: false)
-        let request = UNNotificationRequest(identifier: NotificationIdentifier.timerDone, content: content, trigger: trigger)
-
-        UNUserNotificationCenter.current().add(request)
-    }
-
-    private func cancelNotification() {
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [NotificationIdentifier.timerDone])
+        liveActivity.end()
+        notification.cancel()
     }
 }

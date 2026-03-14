@@ -36,3 +36,7 @@ fastlane/build/
 # Ruby / Bundler
 vendor/bundle
 .bundle/
+
+note/
+CLAUDE*.*
+.claude/
