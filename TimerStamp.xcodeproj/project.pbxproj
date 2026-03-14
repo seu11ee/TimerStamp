@@ -20,13 +20,6 @@
 			remoteGlobalIDString = B8B32C1A2DB13B2600CD65B3;
 			remoteInfo = TimerStamp;
 		};
-		B8B32C362DB13B2800CD65B3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B8B32C132DB13B2600CD65B3 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B8B32C1A2DB13B2600CD65B3;
-			remoteInfo = TimerStamp;
-		};
 		B8E98DCF2DCDF143005731D9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B8B32C132DB13B2600CD65B3 /* Project object */;
@@ -55,7 +48,6 @@
 		B821862A2DCDED45002B370E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		B8B32C1B2DB13B2600CD65B3 /* TimerStamp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimerStamp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8B32C2B2DB13B2800CD65B3 /* TimerStampTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TimerStampTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B8B32C352DB13B2800CD65B3 /* TimerStampUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TimerStampUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8E98DBE2DCDF142005731D9 /* TimerRemainingExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TimerRemainingExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -106,11 +98,6 @@
 			path = TimerStampTests;
 			sourceTree = "<group>";
 		};
-		B8B32C382DB13B2800CD65B3 /* TimerStampUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = TimerStampUITests;
-			sourceTree = "<group>";
-		};
 		B8E98DC12DCDF142005731D9 /* TimerRemaining */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -131,13 +118,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B8B32C282DB13B2800CD65B3 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B8B32C322DB13B2800CD65B3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -170,7 +150,6 @@
 			children = (
 				B8B32C1D2DB13B2600CD65B3 /* TimerStamp */,
 				B8B32C2E2DB13B2800CD65B3 /* TimerStampTests */,
-				B8B32C382DB13B2800CD65B3 /* TimerStampUITests */,
 				B8E98DC12DCDF142005731D9 /* TimerRemaining */,
 				B82186272DCDED45002B370E /* Frameworks */,
 				B8B32C1C2DB13B2600CD65B3 /* Products */,
@@ -182,7 +161,6 @@
 			children = (
 				B8B32C1B2DB13B2600CD65B3 /* TimerStamp.app */,
 				B8B32C2B2DB13B2800CD65B3 /* TimerStampTests.xctest */,
-				B8B32C352DB13B2800CD65B3 /* TimerStampUITests.xctest */,
 				B8E98DBE2DCDF142005731D9 /* TimerRemainingExtension.appex */,
 			);
 			name = Products;
@@ -240,29 +218,6 @@
 			productReference = B8B32C2B2DB13B2800CD65B3 /* TimerStampTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		B8B32C342DB13B2800CD65B3 /* TimerStampUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B8B32C452DB13B2800CD65B3 /* Build configuration list for PBXNativeTarget "TimerStampUITests" */;
-			buildPhases = (
-				B8B32C312DB13B2800CD65B3 /* Sources */,
-				B8B32C322DB13B2800CD65B3 /* Frameworks */,
-				B8B32C332DB13B2800CD65B3 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B8B32C372DB13B2800CD65B3 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				B8B32C382DB13B2800CD65B3 /* TimerStampUITests */,
-			);
-			name = TimerStampUITests;
-			packageProductDependencies = (
-			);
-			productName = TimerStampUITests;
-			productReference = B8B32C352DB13B2800CD65B3 /* TimerStampUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 		B8E98DBD2DCDF142005731D9 /* TimerRemainingExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B8E98DD22DCDF143005731D9 /* Build configuration list for PBXNativeTarget "TimerRemainingExtension" */;
@@ -299,10 +254,6 @@
 						CreatedOnToolsVersion = 16.1;
 					};
 					B8B32C2A2DB13B2800CD65B3 = {
-						CreatedOnToolsVersion = 16.1;
-						TestTargetID = B8B32C1A2DB13B2600CD65B3;
-					};
-					B8B32C342DB13B2800CD65B3 = {
 						CreatedOnToolsVersion = 16.1;
 						TestTargetID = B8B32C1A2DB13B2600CD65B3;
 					};
@@ -346,7 +297,6 @@
 			targets = (
 				B8B32C1A2DB13B2600CD65B3 /* TimerStamp */,
 				B8B32C2A2DB13B2800CD65B3 /* TimerStampTests */,
-				B8B32C342DB13B2800CD65B3 /* TimerStampUITests */,
 				B8E98DBD2DCDF142005731D9 /* TimerRemainingExtension */,
 			);
 		};
@@ -361,13 +311,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B8B32C292DB13B2800CD65B3 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B8B32C332DB13B2800CD65B3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -435,13 +378,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B8B32C312DB13B2800CD65B3 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B8E98DBA2DCDF142005731D9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -456,11 +392,6 @@
 			isa = PBXTargetDependency;
 			target = B8B32C1A2DB13B2600CD65B3 /* TimerStamp */;
 			targetProxy = B8B32C2C2DB13B2800CD65B3 /* PBXContainerItemProxy */;
-		};
-		B8B32C372DB13B2800CD65B3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B8B32C1A2DB13B2600CD65B3 /* TimerStamp */;
-			targetProxy = B8B32C362DB13B2800CD65B3 /* PBXContainerItemProxy */;
 		};
 		B8E98DD02DCDF143005731D9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -709,40 +640,6 @@
 			};
 			name = Release;
 		};
-		B8B32C462DB13B2800CD65B3 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4YXV56BSN6;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yeseullee.timerstampUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = TimerStamp;
-			};
-			name = Debug;
-		};
-		B8B32C472DB13B2800CD65B3 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4YXV56BSN6;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yeseullee.timerstampUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = TimerStamp;
-			};
-			name = Release;
-		};
 		B8E98DD32DCDF143005731D9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -825,15 +722,6 @@
 			buildConfigurations = (
 				B8B32C432DB13B2800CD65B3 /* Debug */,
 				B8B32C442DB13B2800CD65B3 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B8B32C452DB13B2800CD65B3 /* Build configuration list for PBXNativeTarget "TimerStampUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B8B32C462DB13B2800CD65B3 /* Debug */,
-				B8B32C472DB13B2800CD65B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
