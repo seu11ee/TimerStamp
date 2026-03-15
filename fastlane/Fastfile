@@ -1,3 +1,5 @@
+import "DebugLanes"
+
 default_platform(:ios)
 
 platform :ios do
@@ -41,6 +43,18 @@ platform :ios do
     match(
       type: "appstore",
       api_key: api_key
+    )
+
+    increment_build_number(
+      build_number: latest_testflight_build_number(
+        api_key: api_key,
+        version: get_version_number(
+          xcodeproj: "TimerStamp.xcodeproj",
+          target: "TimerStamp"
+        ),
+        initial_build_number: 0
+      ) + 1,
+      xcodeproj: "TimerStamp.xcodeproj"
     )
 
     gym(
