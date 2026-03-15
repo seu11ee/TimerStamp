@@ -71,7 +71,7 @@ platform :ios do
     )
   end
 
-  desc "Build and submit to App Store"
+  desc "Submit existing TestFlight build to App Store review"
   lane :release do
     setup_ci if ENV["CI"]
 
@@ -82,24 +82,27 @@ platform :ios do
       is_key_content_base64: true
     )
 
-    match(
-      type: "appstore",
-      api_key: api_key
+    version = get_version_number(
+      xcodeproj: "TimerStamp.xcodeproj",
+      target: "TimerStamp"
     )
 
-    gym(
-      scheme: "TimerStamp_Release",
-      export_method: "app-store",
-      clean: true,
-      output_directory: "fastlane/build",
-      output_name: "TimerStamp.ipa"
+    build = latest_testflight_build_number(
+      api_key: api_key,
+      version: version,
+      initial_build_number: 0
     )
 
     upload_to_app_store(
       api_key: api_key,
+      app_version: version,
+      build_number: build.to_s,
       submit_for_review: false,
       automatic_release: false,
-      force: true
+      force: true,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      skip_metadata: true
     )
   end
 end

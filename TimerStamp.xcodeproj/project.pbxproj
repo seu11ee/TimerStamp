@@ -177,7 +177,6 @@
 				B8B32C182DB13B2600CD65B3 /* Frameworks */,
 				B8B32C192DB13B2600CD65B3 /* Resources */,
 				B82186412DCDED46002B370E /* Embed Foundation Extensions */,
-				B80DB4F72DFAFDFA008BFBA2 /* ShellScript */,
 				B86F23C62E3BAE6300320FE4 /* ShellScript */,
 			);
 			buildRules = (
@@ -327,23 +326,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		B80DB4F72DFAFDFA008BFBA2 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\nif [ \"${ACTION}\" = \"archive\" ]; then\n    buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\n    buildNumber=$(($buildNumber + 1))\n    /usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n    echo \"Updated build number to $buildNumber\"\nfi\n";
-		};
 		B86F23C62E3BAE6300320FE4 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

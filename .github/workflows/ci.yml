@@ -18,8 +18,8 @@ jobs:
       - name: Select Xcode 16.1
         run: sudo xcode-select -s /Applications/Xcode_16.1.app
 
-      - name: Install SwiftGen
-        run: brew install swiftgen
+      - name: Install SwiftGen if needed
+        run: command -v swiftgen || brew install swiftgen
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
