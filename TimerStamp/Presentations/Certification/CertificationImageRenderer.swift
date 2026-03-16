@@ -1,12 +1,12 @@
 //
-//  CertificationImageService.swift
+//  CertificationImageRenderer.swift
 //  TimerStamp
 //
 
 import SwiftUI
 import UIKit
 
-enum CertificationImageService {
+enum CertificationImageRenderer {
     @MainActor
     static func render(image: UIImage, minutes: Int) -> UIImage? {
         let view = ZStack {

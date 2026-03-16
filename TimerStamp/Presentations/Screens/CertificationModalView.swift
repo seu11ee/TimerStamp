@@ -77,7 +77,7 @@ struct CertificationModalView: View {
                     if !hasRendered {
                         hasRendered = true
                         DispatchQueue.main.async {
-                            if let image = CertificationImageService.render(image: baseImage, minutes: minutes) {
+                            if let image = CertificationImageRenderer.render(image: baseImage, minutes: minutes) {
                                 DispatchQueue.main.async {
                                     composedImage = image
                                 }
