@@ -22,7 +22,7 @@ platform :ios do
   lane :test do
     run_tests(
       scheme: "TimerStamp",
-      destination: "platform=iOS Simulator,name=iPhone 16,OS=18.1",
+      destination: "platform=iOS Simulator,name=iPhone 16,OS=18.5",
       clean: true,
       result_bundle: true,
       output_directory: "fastlane/test_output"
