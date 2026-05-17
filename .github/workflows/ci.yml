@@ -15,8 +15,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Select Xcode 16.1
-        run: sudo xcode-select -s /Applications/Xcode_16.1.app
+      - name: Select Xcode 16.4
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
 
       - name: Install SwiftGen if needed
         run: command -v swiftgen || brew install swiftgen
@@ -27,5 +27,31 @@ jobs:
           ruby-version: "3.3"
           bundler-cache: true
 
-      - name: Run tests
-        run: bundle exec fastlane test
+      - name: Run tests with coverage
+        run: |
+          xcodebuild test \
+            -project TimerStamp.xcodeproj \
+            -scheme TimerStamp \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.5' \
+            -enableCodeCoverage YES \
+            -resultBundlePath fastlane/test_output/TimerStamp.xcresult \
+            | xcpretty
+
+      - name: Extract coverage
+        id: coverage
+        run: |
+          COVERAGE=$(xcrun xccov view --report --json fastlane/test_output/TimerStamp.xcresult \
+            | python3 -c "import sys,json; d=json.load(sys.stdin); print(f\"{d['lineCoverage']*100:.1f}\")")
+          echo "percent=$COVERAGE" >> $GITHUB_OUTPUT
+
+      - name: Comment coverage on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const coverage = '${{ steps.coverage.outputs.percent }}';
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `### 테스트 커버리지: ${coverage}%`
+            })
