@@ -33,6 +33,7 @@ struct TimerScreen: View {
     }
     
     private func handleViewAppear() {
+        photoViewModel.onCertificationCompleted = timerViewModel.reset
         if hasLaunchedBefore == false {
             showOnboarding = true
             hasLaunchedBefore = true
