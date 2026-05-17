@@ -19,8 +19,6 @@ class PhotoSelectionViewModel: ObservableObject {
     @Published var isShowingSourceDialog = false
     @Published private(set) var selectedSourceType: PhotoSourceType = .photoLibrary
 
-    /// 인증사진 플로우 완료(모달 닫기) 시 호출됩니다.
-    /// TimerViewModel.reset 등을 주입해 View 레이어의 협력 로직을 제거합니다.
     var onCertificationCompleted: (() -> Void)?
 
     func didSelectImage(_ image: UIImage?) {
