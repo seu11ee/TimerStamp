@@ -10,6 +10,9 @@ jobs:
   test:
     name: Build & Test
     runs-on: macos-15
+    permissions:
+      pull-requests: write
+      contents: read
 
     steps:
       - name: Checkout
@@ -29,13 +32,14 @@ jobs:
 
       - name: Run tests with coverage
         run: |
+          set -o pipefail
           xcodebuild test \
             -project TimerStamp.xcodeproj \
             -scheme TimerStamp \
             -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.5' \
             -enableCodeCoverage YES \
             -resultBundlePath fastlane/test_output/TimerStamp.xcresult \
-            | xcpretty
+            | bundle exec xcpretty
 
       - name: Extract coverage
         id: coverage
