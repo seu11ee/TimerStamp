@@ -29,4 +29,6 @@ jobs:
           bundler-cache: true
 
       - name: Run tests
+        env:
+          FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: "120"
         run: bundle exec fastlane test
