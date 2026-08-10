@@ -8,19 +8,46 @@
 import Foundation
 import Combine
 
+// MARK: - View State
+
+struct TimerDialViewState {
+    let dialAngle: Double    // 다이얼 + 시침 각도 (0° ~ 360°)
+    let progress: Double     // 파이 슬라이스 비율 (0.0 ~ 1.0)
+    let isInteractive: Bool  // 유저 드래그 가능 여부
+    let durationMinutes: Int // 설정 분 (레이블 표시용)
+}
+
+// MARK: - ViewModel
+
 final class TimerViewModel: ObservableObject {
 
     // MARK: - Public Properties
     @Published var state: TimerState = .idle
-    @Published var durationMinutes: Int = 25 {
-        didSet {
-            if state != .running {
-                reset()
-            }
-        }
-    }
+    @Published private(set) var durationMinutes: Int = 25
     @Published var remainingTime: TimeInterval = 25 * 60
     @Published var endDate: Date?
+
+    var dialViewState: TimerDialViewState {
+        let total = Double(durationMinutes * 60)
+        let angle: Double = switch state {
+        case .idle:             Double(durationMinutes) * 6.0   // 1분 = 6°
+        case .running, .paused: remainingTime / 10.0            // 1초 = 0.1°
+        case .ended:            0
+        }
+        return TimerDialViewState(
+            dialAngle: angle,
+            progress: total > 0 ? remainingTime / total : 0,
+            isInteractive: state == .idle,
+            durationMinutes: durationMinutes
+        )
+    }
+
+    // idle 상태에서만 유저가 분을 변경할 수 있음
+    func setDurationMinutes(_ minutes: Int) {
+        guard state == .idle, minutes != durationMinutes else { return }
+        durationMinutes = minutes
+        remainingTime = TimeInterval(minutes * 60)
+    }
 
     var progress: Double {
         let total = Double(durationMinutes * 60)

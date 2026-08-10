@@ -65,22 +65,23 @@ struct TimerCircleView: View {
     }
     
     var body: some View {
+        let viewState = viewModel.dialViewState
         ZStack {
             MinuteLabels(width: containerSize.width, height: containerSize.height)
-            
+
             TimerProgressPie(
-                progress: viewModel.progress,
-                minutes: viewModel.durationMinutes,
+                progress: viewState.progress,
+                minutes: viewState.durationMinutes,
                 radius: radius
             )
-            
+
             MinuteTicks(radius: radius)
-            
+
             TimerDial(
-                durationMinutes: $viewModel.durationMinutes,
-                remainingTime: $viewModel.remainingTime,
+                displayAngle: viewState.dialAngle,
+                isInteractive: viewState.isInteractive,
                 radius: dialRadius,
-                isRunning: viewModel.state == .running
+                onUserDrag: { viewModel.setDurationMinutes($0) }
             )
         }
     }
@@ -107,12 +108,14 @@ struct TimerProgressPie: View {
 
 // MARK: - Timer Dial Wrapper
 /// MinuteDial을 타이머 맥락에서 사용하기 위한 래퍼.
-/// 분(durationMinutes), 남은 시간(remainingTime) ↔ 각도 변환을 담당합니다.
+///
+/// IN  : displayAngle (ViewModel이 계산한 표시 각도), isInteractive, radius
+/// OUT : onUserDrag  (유저가 드래그했을 때 새 분 값을 콜백으로 전달)
 struct TimerDial: View {
-    @Binding var durationMinutes: Int
-    @Binding var remainingTime: TimeInterval
+    let displayAngle: Double
+    let isInteractive: Bool
     let radius: CGFloat
-    let isRunning: Bool
+    var onUserDrag: (Int) -> Void
 
     @State private var angle: Double = 0
 
@@ -121,20 +124,22 @@ struct TimerDial: View {
             angle: $angle,
             snapStep: 6.0,
             radius: radius,
-            isRunning: isRunning
+            
+            isRunning: !isInteractive
         )
-        .animation(.easeInOut(duration: 0.3), value: isRunning)
+        .animation(.easeInOut(duration: 0.3), value: isInteractive)
         .onAppear {
-            angle = AngleConverter.minutesToDegrees(durationMinutes)
+            angle = displayAngle
+        }
+        .onChange(of: displayAngle) { _, newAngle in
+            // ViewModel이 각도를 바꾸면 반영 (카운트다운, reset 복원 등)
+            // 드래그 중 외부 변경은 MinuteDial 내부에서 무시됨
+            angle = newAngle
         }
         .onChange(of: angle) { _, newAngle in
-            let minutes = Int(newAngle / 6.0)  // 0° = 0분, 360° = 60분
-            guard minutes != durationMinutes else { return }
-            durationMinutes = minutes
-        }
-        .onChange(of: remainingTime) { _, newValue in
-            guard isRunning else { return }
-            angle = AngleConverter.secondsToDegrees(newValue)
+            // 유저 드래그일 때만 ViewModel에 알림
+            guard isInteractive else { return }
+            onUserDrag(Int(newAngle / 6.0))
         }
     }
 }
