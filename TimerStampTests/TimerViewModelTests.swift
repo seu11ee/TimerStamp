@@ -248,6 +248,27 @@ final class TimerViewModelTests: XCTestCase {
         XCTAssertEqual(vm.dialViewState.dialAngle, 0.0, accuracy: 0.001)
     }
 
+    // reset 후 idle 복귀 시 dialAngle이 이전 durationMinutes 기준으로 복원되는지
+    func testDialViewState_idle_afterReset_angleRestoresToPreviousDuration() {
+        vm.setDurationMinutes(10)   // 10분 설정
+        vm.start()
+        vm.reset()
+
+        XCTAssertEqual(vm.state, .idle)
+        XCTAssertEqual(vm.dialViewState.dialAngle, 60.0, accuracy: 0.001)  // 10분 × 6° = 60°
+    }
+
+    // pause 후 reset 해도 durationMinutes가 유지되는지
+    func testDialViewState_idle_afterResetFromPaused_angleRestoresToPreviousDuration() {
+        vm.setDurationMinutes(10)
+        vm.start()
+        vm.pause()
+        vm.reset()
+
+        XCTAssertEqual(vm.state, .idle)
+        XCTAssertEqual(vm.dialViewState.dialAngle, 60.0, accuracy: 0.001)
+    }
+
     // isInteractive: idle만 true
     func testDialViewState_isInteractive_trueOnlyInIdle() {
         XCTAssertTrue(vm.dialViewState.isInteractive, "idle")
