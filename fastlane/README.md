@@ -53,7 +53,7 @@ Build and upload to TestFlight
 [bundle exec] fastlane ios release
 ```
 
-Build and submit to App Store
+Submit existing TestFlight build to App Store review
 
 ----
 

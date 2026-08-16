@@ -15,6 +15,10 @@ on:
           - beta
           - release
 
+concurrency:
+  group: deploy-to-testflight
+  cancel-in-progress: false
+
 jobs:
   deploy:
     name: Deploy
