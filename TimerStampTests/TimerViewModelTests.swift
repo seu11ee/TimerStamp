@@ -212,6 +212,151 @@ final class TimerViewModelTests: XCTestCase {
         XCTAssertEqual(notification.scheduleCallCount, countAfterStart + 1)
     }
 
+    // MARK: - dialViewState Tests
+
+    // dialAngle: idle → durationMinutes * 6°
+    func testDialViewState_idle_angleMatchesDurationMinutes() {
+        let vm = TimerViewModel(durationMinutes: 25, liveActivity: liveActivity, notification: notification)
+
+        XCTAssertEqual(vm.dialViewState.dialAngle, 150.0, accuracy: 0.001)
+    }
+
+    // dialAngle: running → remainingTime / 10°
+    func testDialViewState_running_angleMatchesRemainingTime() {
+        vm.start()
+        vm.remainingTime = 300  // 5분 남음
+
+        XCTAssertEqual(vm.dialViewState.dialAngle, 30.0, accuracy: 0.001)
+    }
+
+    // dialAngle: paused → 멈춘 시점의 remainingTime / 10°
+    // pause()가 내부에서 endDate 기준으로 remainingTime을 덮어쓰므로 pause() 이후에 설정
+    func testDialViewState_paused_angleMatchesRemainingTime() {
+        vm.start()
+        vm.pause()
+        vm.remainingTime = 30
+
+        XCTAssertEqual(vm.dialViewState.dialAngle, 3.0, accuracy: 0.001)
+    }
+
+    // dialAngle: ended → 0°
+    func testDialViewState_ended_angleIsZero() {
+        vm.endDate = Date().addingTimeInterval(-1)
+        vm.restoreOnAppear()
+        XCTAssertEqual(vm.state, .ended)
+
+        XCTAssertEqual(vm.dialViewState.dialAngle, 0.0, accuracy: 0.001)
+    }
+
+    // reset 후 idle 복귀 시 dialAngle이 이전 durationMinutes 기준으로 복원되는지
+    func testDialViewState_idle_afterReset_angleRestoresToPreviousDuration() {
+        vm.setDurationMinutes(10)   // 10분 설정
+        vm.start()
+        vm.reset()
+
+        XCTAssertEqual(vm.state, .idle)
+        XCTAssertEqual(vm.dialViewState.dialAngle, 60.0, accuracy: 0.001)  // 10분 × 6° = 60°
+    }
+
+    // pause 후 reset 해도 durationMinutes가 유지되는지
+    func testDialViewState_idle_afterResetFromPaused_angleRestoresToPreviousDuration() {
+        vm.setDurationMinutes(10)
+        vm.start()
+        vm.pause()
+        vm.reset()
+
+        XCTAssertEqual(vm.state, .idle)
+        XCTAssertEqual(vm.dialViewState.dialAngle, 60.0, accuracy: 0.001)
+    }
+
+    // isInteractive: idle만 true
+    func testDialViewState_isInteractive_trueOnlyInIdle() {
+        XCTAssertTrue(vm.dialViewState.isInteractive, "idle")
+
+        vm.start()
+        XCTAssertFalse(vm.dialViewState.isInteractive, "running")
+
+        vm.pause()
+        XCTAssertFalse(vm.dialViewState.isInteractive, "paused")
+
+        vm.endDate = Date().addingTimeInterval(-1)
+        vm.restoreOnAppear()
+        XCTAssertFalse(vm.dialViewState.isInteractive, "ended")
+    }
+
+    // progress: 시작 직후 ≈ 1.0
+    func testDialViewState_progress_fullAtStart() {
+        vm.start()
+
+        XCTAssertEqual(vm.dialViewState.progress, 1.0, accuracy: 0.01)
+    }
+
+    // progress: remainingTime = 0이면 0.0
+    func testDialViewState_progress_zeroWhenRemainingIsZero() {
+        vm.start()
+        vm.remainingTime = 0
+
+        XCTAssertEqual(vm.dialViewState.progress, 0.0, accuracy: 0.001)
+    }
+
+    // progress: 절반 남았을 때 ≈ 0.5
+    func testDialViewState_progress_halfWhenHalfRemaining() {
+        vm.start()
+        vm.remainingTime = 30  // durationMinutes=1 → total=60초, 절반=30초
+
+        XCTAssertEqual(vm.dialViewState.progress, 0.5, accuracy: 0.01)
+    }
+
+    // MARK: - setDurationMinutes Tests
+
+    // idle 상태에서 분 변경 → 반영됨
+    func testSetDurationMinutes_inIdle_updatesValue() {
+        vm.setDurationMinutes(10)
+
+        XCTAssertEqual(vm.durationMinutes, 10)
+    }
+
+    // idle 상태에서 분 변경 → remainingTime도 같이 갱신됨
+    func testSetDurationMinutes_inIdle_updatesRemainingTime() {
+        vm.setDurationMinutes(10)
+
+        XCTAssertEqual(vm.remainingTime, 600, accuracy: 0.001)
+    }
+
+    // running 중에는 무시됨
+    func testSetDurationMinutes_inRunning_isIgnored() {
+        vm.start()
+        vm.setDurationMinutes(10)
+
+        XCTAssertEqual(vm.durationMinutes, 1)  // setUp에서 1분으로 초기화
+    }
+
+    // paused 상태에서는 무시됨
+    func testSetDurationMinutes_inPaused_isIgnored() {
+        vm.start()
+        vm.pause()
+        vm.setDurationMinutes(10)
+
+        XCTAssertEqual(vm.durationMinutes, 1)
+    }
+
+    // ended 상태에서는 무시됨
+    func testSetDurationMinutes_inEnded_isIgnored() {
+        vm.endDate = Date().addingTimeInterval(-1)
+        vm.restoreOnAppear()
+        vm.setDurationMinutes(10)
+
+        XCTAssertEqual(vm.durationMinutes, 1)
+    }
+
+    // 같은 값 전달하면 아무것도 안 함
+    func testSetDurationMinutes_sameValue_noChange() {
+        let before = vm.remainingTime
+        vm.setDurationMinutes(1)  // 이미 1분
+
+        XCTAssertEqual(vm.remainingTime, before)
+    }
+
     // MARK: - restoreOnAppear Tests
 
     func testRestoreOnAppear_whenIdleWithNoEndDate_cleansUpServices() {
