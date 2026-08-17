@@ -18,11 +18,11 @@ struct TimeLabel: View {
     
     var body: some View {
         timeText
+        .kerning(-1)
         .font(.title)
         .monospacedDigit()
         .fontWeight(.bold)
         .fontWidth(.expanded)
-        .kerning(-2)
     }
     
     static func formatTime(seconds: Int) -> String {
