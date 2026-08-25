@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 0-60분을 5분 단위 원형으로 표시하는 View
 struct MinuteLabels: View {
     var width: CGFloat = 280
     var height: CGFloat = 280

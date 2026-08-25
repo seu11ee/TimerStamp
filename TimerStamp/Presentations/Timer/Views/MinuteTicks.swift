@@ -4,8 +4,11 @@
 //
 //  Created by 이예슬 on 4/19/25.
 //
+
+
 import SwiftUI
 
+///0-60분 눈금을 표시하기 위한 View
 struct MinuteTicks: View {
     var radius: CGFloat  // 반지름을 외부에서 주입받기 위한 프로퍼티
     

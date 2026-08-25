@@ -42,7 +42,9 @@ enum LiveActivityManager {
     static func end() {
         Task {
             for activity in Activity<TimerAttributes>.activities {
-                await activity.end(activity.content, dismissalPolicy: .immediate)
+                let finalState = TimerAttributes.ContentState(endDate: nil, isPaused: false, pausedRemainingTime: 0)
+                let content = ActivityContent(state: finalState, staleDate: nil)
+                await activity.end(content, dismissalPolicy: .immediate)
             }
         }
     }

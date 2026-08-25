@@ -1,5 +1,5 @@
 //
-//  PhotoSelectionViewMdoel.swift
+//  PhotoSelectionViewModel.swift
 //  TimerStamp
 //
 //  Created by 이예슬 on 5/6/25.
@@ -17,27 +17,25 @@ class PhotoSelectionViewModel: ObservableObject {
     @Published var isShowingImagePicker = false
     @Published var isShowingModal = false
     @Published var isShowingSourceDialog = false
-    @Published var sourceType: UIImagePickerController.SourceType = .photoLibrary
-    
-    
+    @Published private(set) var selectedSourceType: PhotoSourceType = .photoLibrary
+
+    var onCertificationCompleted: (() -> Void)?
+
     func didSelectImage(_ image: UIImage?) {
         selectedImage = image
         if image != nil {
             isShowingModal = true
         }
     }
-    
+
     func dismissModal() {
         isShowingModal = false
         selectedImage = nil
+        onCertificationCompleted?()
     }
+
     func selectSource(_ source: PhotoSourceType) {
-        switch source {
-        case .camera:
-            sourceType = .camera
-        case .photoLibrary:
-            sourceType = .photoLibrary
-        }
+        selectedSourceType = source
         isShowingImagePicker = true
     }
 }

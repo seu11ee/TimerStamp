@@ -36,7 +36,10 @@ struct LiveActivityView: View {
                 if contentState.isPaused {
                     return Text(timeString(from: contentState.remainingTime))
                 }
-                return Text(Date(timeIntervalSinceNow: contentState.remainingTime), style: .timer)
+                if let endDate = contentState.endDate, endDate > Date() {
+                    return Text(timerInterval: Date()...endDate, countsDown: true)
+                }
+                return Text(timeString(from: 0))
             }
             
             remainingText

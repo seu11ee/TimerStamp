@@ -36,7 +36,7 @@ struct SimpleTimerView: View {
                 radius: radius
             )
             
-            RadiusStickView(radius: radius * 0.83)
+            RadiusStickView(radius: radius * TimerConstants.dialRadiusRatio)
                 .rotationEffect(.degrees(rotation))
         }
         .frame(width: radius * 2, height: radius * 2)
