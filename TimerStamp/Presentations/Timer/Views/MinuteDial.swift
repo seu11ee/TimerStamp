@@ -20,6 +20,10 @@ struct MinuteDial: View {
     /// 드래그 스냅 단위(도). 기본값 6° = 타이머 1분 단위.
     var snapStep: Double = 6.0
 
+    /// 드래그로 도달할 수 있는 각도 범위. 기본값은 한 바퀴 전체.
+    /// 도메인 규칙(예: 타이머 1~60분 = 6°~360°)은 사용하는 쪽에서 넘긴다.
+    var allowedRange: ClosedRange<Double> = 0...360
+
     var radius: CGFloat
     var isRunning: Bool
 
@@ -89,7 +93,7 @@ struct MinuteDial: View {
 
                 // 클램핑: cumulativeDelta를 조정해 경계 초과 방지
                 let raw = state.startCommittedAngle + state.cumulativeDelta + step
-                let clamped = max(0, min(360, raw))
+                let clamped = clampAngle(raw)
                 state.cumulativeDelta = clamped - state.startCommittedAngle
 
                 state.visualAngle = clamped
@@ -115,6 +119,11 @@ struct MinuteDial: View {
         let dy = Double(point.y - radius)
         let raw = atan2(dy, dx) * 180 / .pi
         return raw < 0 ? raw + 360 : raw
+    }
+
+    /// 각도를 allowedRange 안으로 맞춥니다.
+    func clampAngle(_ rotation: Double) -> Double {
+        min(max(rotation, allowedRange.lowerBound), allowedRange.upperBound)
     }
 
     /// 각도를 snapStep 배수로 내림합니다.

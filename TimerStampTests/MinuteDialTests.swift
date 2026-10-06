@@ -12,10 +12,15 @@ final class MinuteDialTests: XCTestCase {
 
     private let radius: CGFloat = 100
 
-    private func makeDial(angle: Double = 0, snapStep: Double = 6.0) -> MinuteDial {
+    private func makeDial(
+        angle: Double = 0,
+        snapStep: Double = 6.0,
+        allowedRange: ClosedRange<Double> = 0...360
+    ) -> MinuteDial {
         MinuteDial(
             angle: .constant(angle),
             snapStep: snapStep,
+            allowedRange: allowedRange,
             radius: radius,
             isRunning: false
         )
@@ -89,5 +94,36 @@ final class MinuteDialTests: XCTestCase {
         let dial = makeDial(snapStep: 1.0)
         XCTAssertEqual(dial.snapToStep(5.7), 5.0, accuracy: 0.001)
         XCTAssertEqual(dial.snapToStep(5.0), 5.0, accuracy: 0.001)
+    }
+
+    // MARK: - clampAngle (DIAL-2)
+
+    // 타이머 범위(6°~360°) — 하한 밖은 하한으로
+    func test_DIAL2_2_clampAngle_belowRange_returnsLowerBound() {
+        let dial = makeDial(allowedRange: 6...360)
+        XCTAssertEqual(dial.clampAngle(0), 6, accuracy: 0.001)
+        XCTAssertEqual(dial.clampAngle(-30), 6, accuracy: 0.001)
+    }
+
+    // 상한 밖은 상한으로
+    func test_DIAL2_2_clampAngle_aboveRange_returnsUpperBound() {
+        let dial = makeDial(allowedRange: 6...360)
+        XCTAssertEqual(dial.clampAngle(400), 360, accuracy: 0.001)
+    }
+
+    // 범위 안 값은 그대로 (경계값 포함)
+    func test_DIAL2_2_clampAngle_insideRange_unchanged() {
+        let dial = makeDial(allowedRange: 6...360)
+        XCTAssertEqual(dial.clampAngle(6), 6, accuracy: 0.001)
+        XCTAssertEqual(dial.clampAngle(150.5), 150.5, accuracy: 0.001)
+        XCTAssertEqual(dial.clampAngle(360), 360, accuracy: 0.001)
+    }
+
+    // 범위를 넘기지 않으면 기존처럼 한 바퀴(0°~360°) 전체 허용 — 재사용 컴포넌트 기본 동작 유지
+    func test_clampAngle_defaultRange_allowsFullCircle() {
+        let dial = makeDial()
+        XCTAssertEqual(dial.clampAngle(0), 0, accuracy: 0.001)
+        XCTAssertEqual(dial.clampAngle(-1), 0, accuracy: 0.001)
+        XCTAssertEqual(dial.clampAngle(361), 360, accuracy: 0.001)
     }
 }

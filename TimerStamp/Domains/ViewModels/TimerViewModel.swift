@@ -42,11 +42,13 @@ final class TimerViewModel: ObservableObject {
         )
     }
 
-    // idle 상태에서만 유저가 분을 변경할 수 있음
+    // idle 상태에서만 유저가 분을 변경할 수 있음 (TMR-7)
+    // 범위 밖 값은 경계값으로 맞춘다 — 0분 타이머가 시작되는 경로를 막기 위함 (DIAL-2)
     func setDurationMinutes(_ minutes: Int) {
-        guard state == .idle, minutes != durationMinutes else { return }
-        durationMinutes = minutes
-        remainingTime = TimeInterval(minutes * 60)
+        let clamped = TimerDurationLimits.clamped(minutes)
+        guard state == .idle, clamped != durationMinutes else { return }
+        durationMinutes = clamped
+        remainingTime = TimeInterval(clamped * 60)
     }
 
     var progress: Double {
