@@ -119,10 +119,16 @@ struct TimerDial: View {
 
     @State private var angle: Double = 0
 
+    /// 설정 가능한 분 범위(DIAL-2)를 다이얼 각도로 바꾼 값. 1~60분 → 6°~360°
+    private static let allowedAngleRange: ClosedRange<Double> =
+        AngleConverter.minutesToDegrees(TimerDurationLimits.minutesRange.lowerBound)
+        ... AngleConverter.minutesToDegrees(TimerDurationLimits.minutesRange.upperBound)
+
     var body: some View {
         MinuteDial(
             angle: $angle,
             snapStep: 6.0,
+            allowedRange: Self.allowedAngleRange,
             radius: radius,
             
             isRunning: !isInteractive

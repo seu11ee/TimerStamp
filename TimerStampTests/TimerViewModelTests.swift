@@ -357,6 +357,45 @@ final class TimerViewModelTests: XCTestCase {
         XCTAssertEqual(vm.remainingTime, before)
     }
 
+    // MARK: - Duration Range Tests (DIAL-2)
+
+    private var durationRange: ClosedRange<Int> { TimerDurationLimits.minutesRange }
+
+    // 범위보다 작은 값(0분) → 하한으로 맞춤
+    func test_DIAL2_3_setDurationMinutes_belowRange_clampsToLowerBound() {
+        vm.setDurationMinutes(30)
+        vm.setDurationMinutes(durationRange.lowerBound - 1)
+
+        XCTAssertEqual(vm.durationMinutes, durationRange.lowerBound)
+        XCTAssertEqual(vm.remainingTime, TimeInterval(durationRange.lowerBound * 60), accuracy: 0.001)
+    }
+
+    // 범위보다 큰 값 → 상한으로 맞춤
+    func test_DIAL2_3_setDurationMinutes_aboveRange_clampsToUpperBound() {
+        vm.setDurationMinutes(durationRange.upperBound + 1)
+
+        XCTAssertEqual(vm.durationMinutes, durationRange.upperBound)
+    }
+
+    // 상한(60분) 자체는 설정 가능
+    func test_DIAL2_1_setDurationMinutes_upperBound_isAllowed() {
+        vm.setDurationMinutes(durationRange.upperBound)
+
+        XCTAssertEqual(vm.durationMinutes, durationRange.upperBound)
+        XCTAssertEqual(vm.remainingTime, TimeInterval(durationRange.upperBound * 60), accuracy: 0.001)
+    }
+
+    // 크래시 재현 경로: 0분으로 맞춘 뒤 시작 → 하한 기준으로 시작되고 종료 시각은 미래
+    func test_DIAL2_3_start_afterSettingZero_startsWithLowerBound() {
+        vm.setDurationMinutes(30)
+        vm.setDurationMinutes(0)
+        vm.start()
+
+        XCTAssertEqual(vm.state, .running)
+        guard let endDate = vm.endDate else { return XCTFail("endDate가 nil") }
+        XCTAssertEqual(endDate.timeIntervalSinceNow, TimeInterval(durationRange.lowerBound * 60), accuracy: 1.0)
+    }
+
     // MARK: - restoreOnAppear Tests
 
     func testRestoreOnAppear_whenIdleWithNoEndDate_cleansUpServices() {
